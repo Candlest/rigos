@@ -4,7 +4,7 @@ the Chinese version: [中文](./README/README_CN.md)
 
 ## About rublog
 
-rublog` /rʌblɑg/` is a static blog generator written in `Rust`, which implements the following functions:
+rublog `/rʌblɑg/` is a static blog generator written in `Rust`, which implements the following functions:
 
 - Convert `markdown` to `html` via [pulldown cmark](https://github.com/raphlinus/pulldown-cmark)
 - Use [toml-rs](https://github.com/toml-rs/toml) to implement article attributes similar to `YAML Front Matter`
@@ -65,7 +65,7 @@ The `/public` directory is the root directory of the generated website, just upl
 ## Relevant
 
 - [ONEPAGE](https://github.com/hanpei/onepage) gave me great inspiration, especially the part of rendering templates.
--[Hexo](https://github.com/hexojs/hexo), as a static blog generator with both scalability and ease of use, cultivated my user habits and gave me inspiration for command line design.
+- [Hexo](https://github.com/hexojs/hexo), as a static blog generator with both scalability and ease of use, cultivated my user habits and gave me inspiration for command line design.
 - I have referred to a lot of information on the Internet, and I will explain the main parts in my [Development Record](https://www.zhihu.com/column/c_1664617254036639745).
 
 ## Contributors
