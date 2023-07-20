@@ -1,0 +1,16 @@
+[package]
+name = "rublog"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+colored = "2.0.4"
+percent-encoding = "2.3.0"
+walkdir = "2.3.3"
+pulldown-cmark = "0.9.3"
+anyhow = "1.0.72"
+serde = { version = "1.0.171", features = ["derive"]}
+tera = "1.19.0"
+toml = "0.7.6"
