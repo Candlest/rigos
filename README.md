@@ -32,7 +32,7 @@ Currently not packaged, it can be installed from source code.
 
 That is, get the source code from release or directly `git clone`, and use `cargo build --release` to compile. After compiling, add the binary file to the environment variable and use it from the command line.
 
-## use
+## Usage
 
 ### Initialize from rublog-template
 
@@ -62,7 +62,7 @@ The `/public` directory is the root directory of the generated website, just upl
 
 > This design is also inspired by `hexo`.
 
-## relevant
+## Relevant
 
 - [ONEPAGE](https://github.com/hanpei/onepage) gave me great inspiration, especially the part of rendering templates.
 -[Hexo](https://github.com/hexojs/hexo), as a static blog generator with both scalability and ease of use, cultivated my user habits and gave me inspiration for command line design.
