@@ -152,7 +152,7 @@ pub struct Post_Url {
 }
 
 /** file file with Walk Dir*/
-fn get_path_list(path:&str)->Vec<String>{
+pub(crate) fn get_path_list(path:&str)->Vec<String>{
     let mut my_filename_list: Vec<String>=vec![];
     // 只需要文件及对应的路径，不需要空文件夹的名称及路径
         for e in walkdir::WalkDir::new(path).into_iter().filter_map(|e| e.ok()) {

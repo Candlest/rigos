@@ -32,7 +32,7 @@ Currently not packaged, it can be installed from source code.
 
 That is, get the source code from release or directly `git clone`, and use `cargo build --release` to compile. After compiling, add the binary file to the environment variable and use it from the command line.
 
-## use
+## Usage
 
 ### Initialize from rublog-template
 
