@@ -613,6 +613,7 @@ dependencies = [
  "tera",
  "toml",
  "walkdir",
+ "web_server",
 ]
 
 [[package]]
@@ -973,6 +974,12 @@ name = "wasm-bindgen-shared"
 version = "0.2.87"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca6ad05a4870b2bf5fe995117d3728437bd27d7cd5f06f13c17443ef369775a1"
+
+[[package]]
+name = "web_server"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "720326ab28ca0ce35d30275de9d8a4b084399247a54d426844a040ae2ab66682"
 
 [[package]]
 name = "winapi"
