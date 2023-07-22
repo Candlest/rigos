@@ -6,7 +6,6 @@ edition = "2021"
 description = "rublog `/rʌblɑg/` is a static blog generator written in `Rust`, still"
 readme = "README.md"
 license = "MIT"
-license-file = "LICENSE"
 keywords = ["static-site-generator"]
 repository = "https://github.com/candlest/rublog/"
 
