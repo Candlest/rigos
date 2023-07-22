@@ -8,6 +8,7 @@ readme = "README.md"
 license = "MIT"
 keywords = ["static-site-generator"]
 repository = "https://github.com/candlest/rublog/"
+homepage= "https://github.com/candlest/rublog/"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
