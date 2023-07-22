@@ -3,11 +3,11 @@ use colored::Colorize;
 use crate::utils::*;
 
 use super::utils;
-mod server;
 mod build;
 mod clear;
+mod server;
 /*Print Help List */
-pub fn help(){
+pub fn help() {
     /*Help List*/
     let text: &'static str = "
         rublog - A static blog generator powered by Rust
@@ -25,30 +25,30 @@ pub fn help(){
 }
 
 /*Clear PUBLIC_DIR */
-pub fn clear(){
+pub fn clear() {
     utils::info(utils::Info::CLEAR, "now clear", utils::PUBLIC_DIR);
     clear::clear_all();
 }
 
 /*Generate PUBLIC_DIR*/
-pub fn build(){
+pub fn build() {
     utils::info(utils::Info::GENERATE, "now generate", utils::PUBLIC_DIR);
-    let handle_static = std::thread::spawn(||{
+    let handle_static = std::thread::spawn(|| {
         build::build_static_dir();
     });
-    let handle_pages = std::thread::spawn(||{
+    let handle_pages = std::thread::spawn(|| {
         build::build_pages();
     });
     handle_static.join();
     handle_pages.join();
-    let handle_posts = std::thread::spawn(||{
+    let handle_posts = std::thread::spawn(|| {
         build::build_posts_and_index();
     });
     handle_posts.join();
 }
 
 /*RUN PUBLIC_DIR on local web server*/
-pub fn run(){
+pub fn run() {
     utils::info(utils::Info::RUN, "now run", utils::PUBLIC_DIR);
     server::run_server();
 }

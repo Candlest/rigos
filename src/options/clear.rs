@@ -6,7 +6,7 @@ use crate::utils::*;
  * 在删除/public目录的同时，我们要保证.git文件不被破坏
 */
 pub fn clear_all() {
-    let git_DIR  = format!("{}/.git", PUBLIC_DIR);
+    let git_DIR = format!("{}/.git", PUBLIC_DIR);
     let target_git_DIR = format!("{}/.git", STATIC_DIR);
     info(Info::CLEAR, "save to static", &target_git_DIR);
     copy_dir_all(git_DIR, target_git_DIR);
@@ -15,9 +15,12 @@ pub fn clear_all() {
     std::fs::remove_dir_all(std::path::Path::new(p.as_str()));
 }
 
-use std::{io, fs};
+use std::{fs, io};
 
-fn copy_dir_all(src: impl AsRef<std::path::Path>, dst: impl AsRef<std::path::Path>) -> io::Result<()> {
+fn copy_dir_all(
+    src: impl AsRef<std::path::Path>,
+    dst: impl AsRef<std::path::Path>,
+) -> io::Result<()> {
     fs::create_dir_all(&dst)?;
     for entry in fs::read_dir(src)? {
         let entry = entry?;

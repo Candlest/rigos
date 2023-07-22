@@ -22,3 +22,12 @@ serde = { version = "1.0.171", features = ["derive"]}
 tera = "1.19.0"
 toml = "0.7.6"
 web_server = "0.4.2"
+
+[package.metadata.rpm]
+package = "rublog"
+
+[package.metadata.rpm.cargo]
+buildflags = ["--release"]
+
+[package.metadata.rpm.targets]
+rublog = { path = "/usr/bin/rublog" }

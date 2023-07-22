@@ -1,5 +1,5 @@
-mod utils;
 mod options;
+mod utils;
 fn main() {
     let arg = std::env::args();
     match arg.last().unwrap().as_str() {
@@ -9,10 +9,12 @@ fn main() {
         "run" => options::run(),
         "cbr" => {
             options::clear();
-            let handle_build = std::thread::spawn(||{options::build();});
+            let handle_build = std::thread::spawn(|| {
+                options::build();
+            });
             handle_build.join();
             options::run();
         }
-        _ => options::help()
+        _ => options::help(),
     }
 }
