@@ -6,6 +6,7 @@ mod server;
 mod build;
 mod clear;
 mod init;
+mod generate;
 fn main() {
     let arg = std::env::args();
     match arg.len() {

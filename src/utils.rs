@@ -25,6 +25,9 @@ pub const STATIC_DIR: &str = "static";
 pub const PAGE_DIR: &str = "page";
 pub const TEMPLATE_DIR: &str = "template";
 
+/*config */
+pub const CONFIG_FILE: &str = "./config.toml";
+
 /* Thanks to web_server
  * We never use percent_encode again :-)
  */
