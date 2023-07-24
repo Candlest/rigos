@@ -1,19 +1,21 @@
 # README
 
 - [README](#readme)
-  
-   * [about rublog](#about rublog)
-   * [Demo DEMO](#Demo demo)
-   * [installation](#installation)
-   * [use](#use)
-     + [Initialize from rublog-template](#Initialize from rublog-template)
-     + [rublog command](#rublog command)
-     + [publish page](#publish page)
-   * [Development plan](#Development plan)
-   * [TOML Front Matter](#toml-front-matter)
-   * [related](#related)
-   * [contributor](#contributor)
-   * [License](#License)
+  - [About rublog](#about-rublog)
+  - [demo DEMO](#demo-demo)
+  - [Install](#install)
+  - [use](#use)
+    - [Initialize from rublog-template](#initialize-from-rublog-template)
+    - [rublog command](#rublog-command)
+    - [Publishing the web page](#publishing-the-web-page)
+  - [Development Plan](#development-plan)
+  - [TOML Front Matter](#toml-front-matter)
+  - [relevant](#relevant)
+  - [Contributors](#contributors)
+  - [license](#license)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
    
    the Chinese version: [中文](./README/README_CN.md)
 

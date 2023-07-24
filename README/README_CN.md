@@ -1,18 +1,18 @@
 # README_CN
 
-- [README_CN](#readme-cn)
-  * [关于rublog](#关于rublog)
-  * [演示DEMO](#演示demo)
-  * [安装](#安装)
-  * [使用](#使用)
-    + [从rublog-template初始化](#从rublog-template初始化)
-    + [rublog的命令](#rublog的命令)
-    + [发布网页](#发布网页)
-  * [开发计划](#开发计划)
-  * [TOML Front Matter](#toml-front-matter)
-  * [相关](#相关)
-  * [贡献者](#贡献者)
-  * [许可证](#许可证)
+- [README\_CN](#readme_cn)
+  - [关于rublog](#关于rublog)
+  - [演示DEMO](#演示demo)
+  - [安装](#安装)
+  - [使用](#使用)
+    - [从rublog-template初始化](#从rublog-template初始化)
+    - [rublog的命令](#rublog的命令)
+    - [发布网页](#发布网页)
+  - [开发计划](#开发计划)
+  - [TOML Front Matter](#toml-front-matter)
+  - [相关](#相关)
+  - [贡献者](#贡献者)
+  - [许可证](#许可证)
 
 ## 关于rublog
 
