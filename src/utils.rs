@@ -93,21 +93,21 @@ pub fn read_markdown(md_file: &str) -> (String, String) {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Post {
-    pub(crate) title: String,
-    pub(crate) datetime: Datetime,
-    pub(crate) tags: Vec<String>,
-    pub(crate) category: String,
+    pub title: String,
+    pub datetime: Datetime,
+    pub tags: Vec<String>,
+    pub category: String,
 }
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PostObject {
-    pub(crate) title: String,
-    pub(crate) datetime: Datetime,
-    pub(crate) tags: Vec<String>,
-    pub(crate) category: String,
-    pub(crate) url: String,
+    pub title: String,
+    pub datetime: Datetime,
+    pub tags: Vec<String>,
+    pub category: String,
+    pub url: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config{
-    pub(crate) theme: String
+    pub theme: String
 }

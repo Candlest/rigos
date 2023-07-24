@@ -1,7 +1,7 @@
 use colored::Colorize;
 
 
-use crate::{utils::{get_path_list, PostObject, CONFIG_FILE, read_markdown, STATIC_DIR}, build::create_index};
+use crate::{utils::{get_path_list, PostObject, CONFIG_FILE, read_markdown, STATIC_DIR, PAGE_DIR}, build::create_index};
 
 use super::*;
 /*Print Help List */
@@ -49,10 +49,11 @@ pub fn build() {
         if p.ends_with("markdown") || p.ends_with("md") {
             utils::info(utils::Info::GENERATE, "found", p);
             let mut post_item = generate::PostGenerator::new(String::from(p), theme_name.clone());
+            post_item.build();
             posts_vec.push(post_item.get_obejct());
         }
     }
-    let index_body_html = read_markdown(format!("{}/index.md", STATIC_DIR).as_str()).1;
+    let index_body_html = read_markdown(format!("{}/index.md", PAGE_DIR).as_str()).1;
     create_index(posts_vec, index_body_html)
 }
 

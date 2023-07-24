@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::ops::Add;
 use toml::{Value, value::Datetime};
-use crate::utils::{self, PostObject, Post, get_path_list};
+use crate::utils::{self, PostObject, Post, get_path_list, read_markdown};
 
 pub fn build_pages() {
     let getfilelist: Vec<String> = get_path_list(utils::PAGE_DIR);
