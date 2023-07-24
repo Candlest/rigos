@@ -1,18 +1,13 @@
 use serde::{Deserialize, Serialize};
 use toml::value::Datetime;
 
-use crate::utils;
+use crate::utils::{self, PostObject, Post};
 
 /* generate.rs
  * 使用它替代build.rs
  */
-pub enum GeneratedObject {
-    POST,
-    PAGE,
-}
 
-pub struct Generator {
-    file_type: GeneratedObject,
+pub struct PostGenerator {
     file_path: String,
     theme_dir: String,
     toml_info: String,
@@ -20,10 +15,9 @@ pub struct Generator {
     html_path: String,
 }
 
-impl Generator {
-    pub fn new(path: String, file_t: GeneratedObject, theme: String) -> Generator {
-        Generator {
-            file_type: file_t,
+impl PostGenerator {
+    pub fn new(path: String, theme: String) -> PostGenerator {
+        PostGenerator {
             file_path: path,
             theme_dir: theme,
             toml_info: "".to_string(),
@@ -52,6 +46,7 @@ impl Generator {
         self.body_html = body;
     }
     pub fn build(&mut self) {
+        (self.toml_info, self.body_html) = utils::read_markdown(&self.file_path);
         self.split_file(); /*Get toml, html body */
         let tera = match tera::Tera::new(
             format!("{}/{}/**/*.html", utils::TEMPLATE_DIR, self.theme_dir).as_str(),
@@ -70,34 +65,21 @@ impl Generator {
         let file_name = std::path::Path::new(&self.file_path);
         let file_name = file_name.file_stem().unwrap().to_str().unwrap(); //UNWARP
 
-        match self.file_type {
-            GeneratedObject::PAGE => {
-                self.html_path = format!("{}/{}.html", utils::PUBLIC_DIR, file_name);
-                let page: Page = toml::from_str(&self.toml_info).unwrap();
-                context.insert("page", &page);
-                //render
-                rendered = tera.render("page.html", &context).unwrap();
-            }
-            GeneratedObject::POST => {
-                self.html_path = format!("{}/Post/{}.html", utils::PUBLIC_DIR, file_name);
-                let post: Post = toml::from_str(&self.toml_info).unwrap();
-                context.insert("post", &post);
-                //render
-                rendered = tera.render("post.html", &context).unwrap();
-            }
-        }
+        self.html_path = format!("{}/Post/{}.html", utils::PUBLIC_DIR, file_name);
+        let post: Post = toml::from_str(&self.toml_info).unwrap();
+        context.insert("post", &post);
+        //render
+        rendered = tera.render("post.html", &context).unwrap();
+
         let folder = std::path::Path::new(&self.html_path).parent().unwrap();
         let _ = std::fs::create_dir_all(folder);
         let htm_path = &self.html_path;
         std::fs::write(htm_path, rendered).unwrap();
     }
-    /**
-     * 使用前请先确认是Post
-     */
-    pub fn get_obejct(&mut self) -> Post_Object {
+    pub fn get_obejct(&mut self) -> PostObject {
         let p: Post = toml::from_str(&self.toml_info).unwrap();
         let web_path = utils::path_local2web(&self.html_path);
-        Post_Object {
+        PostObject {
             title: p.title,
             datetime: p.datetime,
             tags: p.tags,
@@ -105,24 +87,4 @@ impl Generator {
             url: web_path,
         }
     }
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Post {
-    title: String,
-    datetime: Datetime,
-    tags: Vec<String>,
-    category: String,
-}
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Post_Object {
-    title: String,
-    datetime: Datetime,
-    tags: Vec<String>,
-    category: String,
-    url: String,
-}
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Page {
-    title: String,
 }

@@ -1,6 +1,8 @@
 use colored::Colorize;
 
 
+use crate::{utils::{get_path_list, PostObject, CONFIG_FILE, read_markdown, STATIC_DIR}, build::create_index};
+
 use super::*;
 /*Print Help List */
 pub fn help() {
@@ -27,6 +29,10 @@ pub fn clear() {
 
 /*Generate PUBLIC_DIR*/
 pub fn build() {
+    let cfg_cont = std::fs::read_to_string(CONFIG_FILE).unwrap();
+    let cfg: utils::Config = toml::from_str(cfg_cont.as_str()).unwrap();
+    let theme_name = cfg.theme;
+
     utils::info(utils::Info::GENERATE, "now generate", utils::PUBLIC_DIR);
     let handle_static = std::thread::spawn(|| {
         build::build_static_dir();
@@ -36,10 +42,18 @@ pub fn build() {
     });
     handle_static.join().unwrap();
     handle_pages.join().unwrap();
-    let handle_posts = std::thread::spawn(|| {
-        build::build_posts_and_index();
-    });
-    handle_posts.join().unwrap();
+
+    let getfilelist: Vec<String> = get_path_list(utils::SOURCE_DIR);
+    let mut posts_vec: Vec<PostObject> = vec![];
+    for p in getfilelist.iter() {
+        if p.ends_with("markdown") || p.ends_with("md") {
+            utils::info(utils::Info::GENERATE, "found", p);
+            let mut post_item = generate::PostGenerator::new(String::from(p), theme_name.clone());
+            posts_vec.push(post_item.get_obejct());
+        }
+    }
+    let index_body_html = read_markdown(format!("{}/index.md", STATIC_DIR).as_str()).1;
+    create_index(posts_vec, index_body_html)
 }
 
 /*RUN PUBLIC_DIR on local web server*/
