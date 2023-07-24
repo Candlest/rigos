@@ -6,14 +6,16 @@ pub fn info(inforation: Info, content: &str, remark: &str) {
         Info::CLEAR => ("[CLEAR]".bold().blue(), remark.green()),
         Info::RUN => ("[RUN]".bold().blue(), remark.green()),
         Info::ERROR => ("[ERROR]".bold().red(), remark.red()),
+        Info::INIT => ("[INIT]".bold().blue(), remark.green()),
     };
-    println!("{}\t{}\t{}", color_str.0, content, color_str.1);
+    println!("{}{}\t\t{}", color_str.0, content, color_str.1);
 }
 pub enum Info {
     GENERATE,
     RUN,
     CLEAR,
     ERROR,
+    INIT
 }
 
 /* Define DIR as constant*/

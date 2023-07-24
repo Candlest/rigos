@@ -48,4 +48,8 @@ pub fn run() {
     server::run_server();
 }
 
+pub fn init() {
+    utils::info(utils::Info::INIT, "now init", "./");
+    init::init();
+}
 //-------------

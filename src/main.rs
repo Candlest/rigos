@@ -15,6 +15,7 @@ fn main() {
             "clear" => options::clear(),
             "build" => options::build(),
             "run" => options::run(),
+            "init" => options::init(),
             "cbr" => {
                 options::clear();
                 let handle_build = std::thread::spawn(|| {
