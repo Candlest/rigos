@@ -1,7 +1,7 @@
 use crate::utils;
 use serde::{Deserialize, Serialize};
 use std::ops::Add;
-use toml::Value;
+use toml::{Value, value::Datetime};
 
 pub fn build_pages() {
     let getfilelist: Vec<String> = get_path_list(utils::PAGE_DIR);
@@ -141,7 +141,7 @@ pub fn create_html_from_index(toml_info: String, post_urls: Vec<Post_Url>, body_
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Post {
     title: String,
-    datetime: String,
+    datetime: Datetime,
     tags: Vec<String>,
     category: String,
 }

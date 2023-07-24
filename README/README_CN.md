@@ -1,20 +1,29 @@
 # README_CN
 
+- [README_CN](#readme-cn)
+  * [关于rublog](#关于rublog)
+  * [演示DEMO](#演示demo)
+  * [安装](#安装)
+  * [使用](#使用)
+    + [从rublog-template初始化](#从rublog-template初始化)
+    + [rublog的命令](#rublog的命令)
+    + [发布网页](#发布网页)
+  * [开发计划](#开发计划)
+  * [TOML Front Matter](#toml-front-matter)
+  * [相关](#相关)
+  * [贡献者](#贡献者)
+  * [许可证](#许可证)
+
 ## 关于rublog
 
 rublog` /rʌblɑg/ `是一个使用`Rust`编写的静态博客生成器，实现了以下功能：
 
 - 通过[pulldown cmark](https://github.com/raphlinus/pulldown-cmark)将`markdown`转换为`html`
-- 使用[toml-rs](https://github.com/toml-rs/toml)实现了类似`YAML Front Matter`的文章属性
+- 使用[toml-rs](https://github.com/toml-rs/toml)实现了类似`YAML Front Matter`的文章属性，查看[TOML Front Matter](#TOML Front Matter)
 - 通过[tera](https://github.com/Keats/tera)实现类[Django template language](https://docs.djangoproject.com/en/3.1/topics/templates/)的`html`模板渲染
-- 实现了一个非常简陋的本地HTTP服务器以供预览网站
+- 目前使用[web_server](https://github.com/Milesq/web_server)预览网站（考虑重写）
 
-计划实现的：
-
-- [ ] 实现一个项目内的`rublog_config.toml`文件
-- [ ] 实现`rublog push`将`/public`推送至`Github Page`
-- [ ] 暴露更多的`Front Matter`
-- [ ] 实现`rublog init $PROJECT`
+[查看我们的开发计划](#开发计划)。
 
 ## 演示DEMO
 
@@ -28,7 +37,14 @@ rublog` /rʌblɑg/ `是一个使用`Rust`编写的静态博客生成器，实现
 
 > 以后会有 ;-)
 
-即从release或者直接`git clone`获取源码，使用`cargo build --release`进行编译。编译完成后，将二进制文件加入环境变量，即可从命令行中使用。
+即从release或者直接`git clone`获取源码，使用`cargo build --release`进行编译。编译完成后，将二进制文件加入环境变量，即可从命令行中使用。下面是一个适用于`linux`的例子：
+
+```bash
+git clone https://github.com/Candlest/rublog.git
+cd ./rublog
+cargo build --release
+sudo cp ./target/release/rublog /usr/bin/rublog
+```
 
 ## 使用
 
@@ -59,6 +75,54 @@ git clone https://github.com/Candlest/rublog-template.git
 `/public`目录即为被生成网站的根目录，上传即可。
 
 > 这个设计的灵感也是来自`hexo`。
+
+## 开发计划
+
+> 由于Candlest正在准备2024年的中国高考，开发进度大概率暂缓。
+
+`TOML Front Matter`相关：
+
+- [ ] `TOML Front Matter`缺省处理
+- [ ] 更多的`TOML Front Matter`
+- [ ] 通过命令行参数生成默认`TOML Front Matter`
+- [ ] 通过`TOML Front Matter`为文章排序，以及通过标签索引文章
+
+插件与可拓展性：
+
+- [ ] 使用`config.toml`管理网页相关参数
+- [ ] 构建一个插件管理系统，并使用插件管理系统添加`gitalk`，`highlight.js`等
+- [ ] 构建一个主题管理系统，并创建默认主题
+
+代码相关：
+
+- [ ] 认真地写错误处理，而不是`unwarp()`走天下
+- [ ] 自己写一个能够满足博客需求的server实现，或者找到兼具轻量与高性能的库
+- [ ] 整理项目，学习[crates.io](https://crates.io)的项目格式
+
+文档相关：
+
+- [ ] 使用GitHub Action生成贡献者列表
+- [ ] 拆解README
+
+## TOML Front Matter
+
+目前，有两种`TOML Front Matter`格式：Post 和 Page。
+
+```rust
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Post {
+    title: String,
+    datetime: Datetime,
+    tags: Vec<String>,
+    category: String,
+}
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Page {
+    title: String,
+}
+```
+
+我们可以通过`TOML Front Matter`设置`markdown`文档的属性，通过`tera`模板语言访问它们。
 
 ## 相关
 

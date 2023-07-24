@@ -1,11 +1,7 @@
 use colored::Colorize;
 
-use crate::utils::*;
 
-use super::utils;
-mod build;
-mod clear;
-mod server;
+use super::*;
 /*Print Help List */
 pub fn help() {
     /*Help List*/
@@ -20,7 +16,6 @@ pub fn help() {
         ------------------------------------------------
         Get more information from https://github.com/Candlest/rublog
         ";
-    use colored::Colorize;
     println!("{}", text.green());
 }
 
@@ -39,12 +34,12 @@ pub fn build() {
     let handle_pages = std::thread::spawn(|| {
         build::build_pages();
     });
-    handle_static.join();
-    handle_pages.join();
+    handle_static.join().unwrap();
+    handle_pages.join().unwrap();
     let handle_posts = std::thread::spawn(|| {
         build::build_posts_and_index();
     });
-    handle_posts.join();
+    handle_posts.join().unwrap();
 }
 
 /*RUN PUBLIC_DIR on local web server*/
