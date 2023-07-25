@@ -16,4 +16,17 @@ pub fn init(){
         let dir_path = path::Path::new(&dir_path);
         fs::create_dir_all(dir_path).unwrap();
     }
+    init_config();
+}
+
+fn init_config(){
+    info(Info::INIT, "create", utils::CONFIG_FILE);
+    let contents = 
+r#"# config.toml
+# manager your blog settings
+
+# theme
+theme="default"
+"#;
+    fs::write(path::Path::new(utils::CONFIG_FILE), contents).unwrap()
 }
