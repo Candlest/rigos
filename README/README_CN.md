@@ -16,7 +16,7 @@
 
 ## 关于rublog
 
-rublog` /rʌblɑg/ `是一个使用`Rust`编写的静态博客生成器，实现了以下功能：
+rublog`/rʌblɑg/`是一个使用`Rust`编写的静态博客生成器，实现了以下功能：
 
 - 通过[pulldown cmark](https://github.com/raphlinus/pulldown-cmark)将`markdown`转换为`html`
 - 使用[toml-rs](https://github.com/toml-rs/toml)实现了类似`YAML Front Matter`的文章属性，查看[TOML Front Matter](#TOML Front Matter)
@@ -80,33 +80,34 @@ git clone https://github.com/Candlest/rublog-template.git
 
 > 由于Candlest正在准备2024年的中国高考，开发进度大概率暂缓。
 
-`TOML Front Matter`相关：
+`TOML Front Matter` 相关：
 
-- [ ] `TOML Front Matter`缺省处理
-- [ ] 更多的`TOML Front Matter`
-- [ ] 通过命令行参数生成默认`TOML Front Matter`
-- [ ] 通过`TOML Front Matter`为文章排序，以及通过标签索引文章
+- [ ] `TOML Front Matter` 缺省处理
+- [ ] 更多的 `TOML Front Matter`
+- [ ] 通过命令行参数生成默认 `TOML Front Matter`
+- [ ] 通过 `TOML Front Matter` 为文章排序
+- [ ] 通过 `tags`, `category` 索引文章
 
 插件与可拓展性：
 
-- [ ] 使用`config.toml`管理网页相关参数
-- [ ] 构建一个插件管理系统，并使用插件管理系统添加`gitalk`，`highlight.js`等
-- [ ] 构建一个主题管理系统，并创建默认主题
+- [ ] 使用 `config.toml` 管理网页相关参数
+- [ ] 构建一个插件管理系统，并使用插件管理系统添加 `gitalk`，`highlight.js` 等
+- [x] 构建一个主题管理系统，并创建默认主题
 
 代码相关：
 
-- [ ] 认真地写错误处理，而不是`unwarp()`走天下
+- [ ] 认真地写错误处理，而不是 `unwarp()` 走天下
 - [ ] 自己写一个能够满足博客需求的server实现，或者找到兼具轻量与高性能的库
-- [ ] 整理项目，学习[crates.io](https://crates.io)的项目格式
+- [ ] 整理项目，学习[ crates.io ](https://crates.io)的项目格式
 
 文档相关：
 
-- [ ] 使用GitHub Action生成贡献者列表
+- [x] 生成贡献者列表
 - [ ] 拆解README
 
 ## TOML Front Matter
 
-目前，有两种`TOML Front Matter`格式：Post 和 Page。
+目前，有两种 `TOML Front Matter` 格式：Post 和 Page。
 
 ```rust
 #[derive(Serialize, Deserialize, Debug)]
@@ -122,7 +123,7 @@ pub struct Page {
 }
 ```
 
-我们可以通过`TOML Front Matter`设置`markdown`文档的属性，通过`tera`模板语言访问它们。
+我们可以通过 `TOML Front Matter` 设置 `markdown` 文档的属性，通过 `tera` 模板语言访问它们。
 
 ## 相关
 
@@ -132,10 +133,10 @@ pub struct Page {
 
 ## 贡献者
 
-[@Candlest](https://github.com/Candlest)
+[<a herf="https://github.com/Candlest/rublog/graphs/contributors"><img src="https://contrib.rocks/image?repo=Candlest/rublog" alt="Contributors" /></a>](https://github.com/Candlest)
 
 欢迎任何的贡献！
 
 ## 许可证
 
-本项目使用**MIT License**开源。
+本项目使用 **MIT License** 开源。

@@ -14,10 +14,8 @@
   - [Contributors](#contributors)
   - [license](#license)
 
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
-   
-   the Chinese version: [中文](./README/README_CN.md)
+the Chinese version: [中文](./README/README_CN.md)
 
 ## About rublog
 
@@ -90,7 +88,8 @@ The `/public` directory is the root directory of the generated website, just upl
 - [ ] `TOML Front Matter` default handling
 - [ ] More `TOML Front Matter`
 - [ ] Generate default `TOML Front Matter` via command line arguments
-- [ ] Sort articles by `TOML Front Matter`, and index articles by tags
+- [ ] Sort articles by `TOML Front Matter`
+- [ ] index articles by `tags` and `category`
 
 Plugins and Extensibility:
 
@@ -106,7 +105,7 @@ Code related:
 
 Documentation related:
 
-- [ ] Generate list of contributors using GitHub Action
+- [x] Generate list of contributors
 - [ ] Disassemble README
 
 ## TOML Front Matter
@@ -137,7 +136,7 @@ We can set the properties of the `markdown` document through `TOML Front Matter`
 
 ## Contributors
 
-[@Candlest](https://github.com/Candlest)
+<a herf="https://github.com/Candlest/rublog/graphs/contributors"><img src="https://contrib.rocks/image?repo=Candlest/rublog" alt="Contributors" /></a>
 
 Any contributions are welcome!
 

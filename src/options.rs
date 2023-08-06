@@ -1,7 +1,9 @@
 use colored::Colorize;
 
-
-use crate::{utils::{get_path_list, PostObject, CONFIG_FILE, read_markdown, STATIC_DIR, PAGE_DIR}, build::create_index};
+use crate::{
+    build::create_index,
+    utils::{get_path_list, read_markdown, PostObject, CONFIG_FILE, PAGE_DIR, STATIC_DIR},
+};
 
 use super::*;
 /*Print Help List */
@@ -37,11 +39,9 @@ pub fn build() {
     let handle_static = std::thread::spawn(|| {
         build::build_static_dir();
     });
-    let handle_pages = std::thread::spawn(|| {
-        build::build_pages();
-    });
+
+    build::build_pages(theme_name.clone());
     handle_static.join().unwrap();
-    handle_pages.join().unwrap();
 
     let getfilelist: Vec<String> = get_path_list(utils::SOURCE_DIR);
     let mut posts_vec: Vec<PostObject> = vec![];
@@ -54,7 +54,7 @@ pub fn build() {
         }
     }
     let index_body_html = read_markdown(format!("{}/index.md", PAGE_DIR).as_str()).1;
-    create_index(posts_vec, index_body_html)
+    create_index(posts_vec, index_body_html, theme_name.clone())
 }
 
 /*RUN PUBLIC_DIR on local web server*/

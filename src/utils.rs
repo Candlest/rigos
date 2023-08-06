@@ -98,14 +98,23 @@ pub struct Post {
     pub tags: Vec<String>,
     pub category: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PostString {
+    pub title: String,
+    pub datetime: String,
+    pub tags: Vec<String>,
+    pub category: String,
+}
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PostObject {
     pub title: String,
-    pub datetime: Datetime,
+    pub datetime: String,
     pub tags: Vec<String>,
     pub category: String,
     pub url: String,
 }
+
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config{
