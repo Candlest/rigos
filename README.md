@@ -88,12 +88,12 @@ The `/public` directory is the root directory of the generated website, just upl
 - [ ] `TOML Front Matter` default handling
 - [ ] More `TOML Front Matter`
 - [ ] Generate default `TOML Front Matter` via command line arguments
-- [ ] Sort articles by `TOML Front Matter`
-- [ ] index articles by `tags` and `category`
+- [x] Sort articles by `TOML Front Matter`
+- [x] index articles by `tags` and `category`
 
 Plugins and Extensibility:
 
-- [ ] Use `config.toml` to manage webpage related parameters
+- [x] Use `config.toml` to manage webpage related parameters
 - [ ] Build a plugin management system and use the plugin management system to add `gitalk`, `highlight.js`, etc.
 - [ ] Build a theme management system and create default themes
 

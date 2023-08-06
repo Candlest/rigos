@@ -54,7 +54,13 @@ pub fn build() {
         }
     }
     let index_body_html = read_markdown(format!("{}/index.md", PAGE_DIR).as_str()).1;
-    create_index(posts_vec, index_body_html, theme_name.clone())
+    create_index("index.html".to_string(),posts_vec.clone(), index_body_html, theme_name.clone());
+
+    let index_body_html = read_markdown(format!("{}/tags.md", PAGE_DIR).as_str()).1;
+    create_index("tags.html".to_string(),posts_vec.clone(), index_body_html, theme_name.clone());
+
+    let index_body_html = read_markdown(format!("{}/categories.md", PAGE_DIR).as_str()).1;
+    create_index("categories.html".to_string(),posts_vec, index_body_html, theme_name.clone());
 }
 
 /*RUN PUBLIC_DIR on local web server*/

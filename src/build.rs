@@ -115,8 +115,8 @@ pub fn create_html_from_page(
     std::fs::write(html_path, rendered).unwrap();
 }
 
-pub fn create_index(post_urls: Vec<PostObject>, body_html: String, theme: String) {
-    let html_path = format!("{}/{}", utils::PUBLIC_DIR, "index.html");
+pub fn create_index(target_name: String, post_urls: Vec<PostObject>, body_html: String, theme: String) {
+    let html_path = format!("{}/{}", utils::PUBLIC_DIR, target_name);
     let tera =
         match tera::Tera::new(format!("{}/{}/**/*.html", utils::TEMPLATE_DIR, theme).as_str()) {
             Ok(t) => t,
@@ -131,7 +131,7 @@ pub fn create_index(post_urls: Vec<PostObject>, body_html: String, theme: String
     //dbg!(post_urls);
     context.insert("post_index", &post_urls);
     //render
-    let rendered = tera.render("index.html", &context).unwrap();
+    let rendered = tera.render(target_name.as_str(), &context).unwrap();
     //println!("{}", rendered);
     let folder = std::path::Path::new(&html_path).parent().unwrap();
     let _ = std::fs::create_dir_all(folder);

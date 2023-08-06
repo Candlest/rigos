@@ -85,12 +85,12 @@ git clone https://github.com/Candlest/rublog-template.git
 - [ ] `TOML Front Matter` 缺省处理
 - [ ] 更多的 `TOML Front Matter`
 - [ ] 通过命令行参数生成默认 `TOML Front Matter`
-- [ ] 通过 `TOML Front Matter` 为文章排序
-- [ ] 通过 `tags`, `category` 索引文章
+- [x] 通过 `TOML Front Matter` 为文章排序
+- [x] 通过 `tags`, `category` 索引文章
 
 插件与可拓展性：
 
-- [ ] 使用 `config.toml` 管理网页相关参数
+- [x] 使用 `config.toml` 管理网页相关参数
 - [ ] 构建一个插件管理系统，并使用插件管理系统添加 `gitalk`，`highlight.js` 等
 - [x] 构建一个主题管理系统，并创建默认主题
 
