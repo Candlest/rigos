@@ -1,11 +1,13 @@
 # README
 
+> ⚠️ This project is still in the early development stage and will undergo refactoring. It is not recommended to use before version 1.0! ! !
+
 - [README](#readme)
   - [About rublog](#about-rublog)
   - [demo DEMO](#demo-demo)
   - [Install](#install)
   - [use](#use)
-    - [Initialize from rublog-template](#initialize-from-rublog-template)
+    - [~~Initialize from rublog-template~~](#initialize-from-rublog-template)
     - [rublog command](#rublog-command)
     - [Publishing the web page](#publishing-the-web-page)
   - [Development Plan](#development-plan)
@@ -51,7 +53,9 @@ sudo cp ./target/release/rublog /usr/bin/rublog
 
 ## use
 
-### Initialize from rublog-template
+### ~~Initialize from rublog-template~~
+
+> ⚠️ This part is not available recently.
 
 We can initialize our project from [rublog-template](https://github.com/Candlest/rublog-template), please see its [README](https://github.com/Candlest/rublog-template/blob/main/README.md) for details, so I won’t go into details here.
 
@@ -76,8 +80,6 @@ Lazy package: `clear`, `build`, `run` in one go: `rublog cbr`
 ### Publishing the web page
 
 The `/public` directory is the root directory of the generated website, just upload it.
-
-> This design is also inspired by `hexo`.
 
 ## Development Plan
 
@@ -138,7 +140,7 @@ We can set the properties of the `markdown` document through `TOML Front Matter`
 
 <a herf="https://github.com/Candlest/rublog/graphs/contributors"><img src="https://contrib.rocks/image?repo=Candlest/rublog" alt="Contributors" /></a>
 
-Any contributions are welcome!
+Contributions of any kind are welcome!
 
 ## license
 

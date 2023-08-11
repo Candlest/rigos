@@ -1,11 +1,13 @@
 # README_CN
 
+> ⚠️ 这个项目仍在初期开发期，并且将经历重构，在1.0版本前不建议使用！！！
+
 - [README\_CN](#readme_cn)
   - [关于rublog](#关于rublog)
   - [演示DEMO](#演示demo)
   - [安装](#安装)
   - [使用](#使用)
-    - [从rublog-template初始化](#从rublog-template初始化)
+    - [~~从rublog-template初始化~~](#从rublog-template初始化)
     - [rublog的命令](#rublog的命令)
     - [发布网页](#发布网页)
   - [开发计划](#开发计划)
@@ -48,7 +50,9 @@ sudo cp ./target/release/rublog /usr/bin/rublog
 
 ## 使用
 
-### 从rublog-template初始化
+### ~~从rublog-template初始化~~
+
+> ⚠️ 这一部分暂不可用，请参照 Candlest 的 Github Page 。
 
 我们可以从[rublog-template](https://github.com/Candlest/rublog-template)初始化我们的项目，详情请看其[README](https://github.com/Candlest/rublog-template/blob/main/README.md)，这里不再赘述。
 
@@ -73,8 +77,6 @@ git clone https://github.com/Candlest/rublog-template.git
 ### 发布网页
 
 `/public`目录即为被生成网站的根目录，上传即可。
-
-> 这个设计的灵感也是来自`hexo`。
 
 ## 开发计划
 
