@@ -1,20 +1,16 @@
-use std::fmt::format;
-
-use crate::utils::*;
-
 /* CLEAR
  * 在删除/public目录的同时，我们要保证.git文件不被破坏，暂时没有做到
 */
-pub fn clear_all() {
+// pub fn clear_all() {
     
-    let git_DIR = format!("{}/.git", PUBLIC_DIR);
-    let target_git_DIR = format!("{}/.git", STATIC_DIR);
-    info(Info::CLEAR, "save to static", &target_git_DIR);
-    copy_dir_all(git_DIR, target_git_DIR);
-    let p: String = PUBLIC_DIR.to_string();
-    info(Info::CLEAR, "clearing", PUBLIC_DIR);
-    std::fs::remove_dir_all(std::path::Path::new(p.as_str()));
-}
+//     let git_DIR = format!("{}/.git", PUBLIC_DIR);
+//     let target_git_DIR = format!("{}/.git", STATIC_DIR);
+//     info(Info::CLEAR, "save to static", &target_git_DIR);
+//     copy_dir_all(git_DIR, target_git_DIR);
+//     let p: String = PUBLIC_DIR.to_string();
+//     info(Info::CLEAR, "clearing", PUBLIC_DIR);
+//     std::fs::remove_dir_all(std::path::Path::new(p.as_str()));
+// }
 
 use std::{fs, io};
 

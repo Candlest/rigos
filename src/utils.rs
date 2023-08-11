@@ -1,9 +1,9 @@
+use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use toml::value::Datetime;
 
 /* fn info: Output content in a canonical manner*/
 pub fn info(inforation: Info, content: &str, remark: &str) {
-    use colored::Colorize;
     let color_str = match inforation {
         Info::GENERATE => ("[GENERATE]".bold().blue(), remark.green()),
         Info::CLEAR => ("[CLEAR]".bold().blue(), remark.green()),
@@ -11,7 +11,7 @@ pub fn info(inforation: Info, content: &str, remark: &str) {
         Info::ERROR => ("[ERROR]".bold().red(), remark.red()),
         Info::INIT => ("[INIT]".bold().blue(), remark.green()),
     };
-    println!("{}{}\t\t{}", color_str.0, content, color_str.1);
+    println!("{}{:20}\t\t{}", color_str.0, content, color_str.1);
 }
 pub enum Info {
     GENERATE,
@@ -115,8 +115,20 @@ pub struct PostObject {
     pub url: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Config {
+    pub page_templates: Vec<String>,
+    pub public_dir: String,
+    pub source_dir: String,
+    pub static_dir: String,
+    pub page_dir: String,
+    pub template_dir: String,
+    pub theme: String,
+}
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Config{
-    pub theme: String
+impl Config {
+    pub fn new(path: String) -> Config {
+        let cfg_cont = std::fs::read_to_string(path).unwrap();
+        toml::from_str(cfg_cont.as_str()).expect("config file can not read")
+    }
 }

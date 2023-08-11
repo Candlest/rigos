@@ -3,7 +3,7 @@ name = "rublog"
 authors = ["Candlest<candlest1112@gmail.com>"]
 version = "0.1.1"
 edition = "2021"
-description = "rublog `/rʌblɑg/` is a static blog generator written in `Rust`, still"
+description = "rublog is a static blog generator written in Rust"
 readme = "README.md"
 license = "MIT"
 keywords = ["static-site-generator"]
@@ -22,12 +22,4 @@ anyhow = "1.0.72"
 serde = { version = "1.0.171", features = ["derive"] }
 toml = "0.7.6"
 web_server = "0.4.2"
-
-[package.metadata.rpm]
-package = "rublog"
-
-[package.metadata.rpm.cargo]
-buildflags = ["--release"]
-
-[package.metadata.rpm.targets]
-rublog = { path = "/usr/bin/rublog" }
+clap = { version = "4.3.21", features = ["derive"] }
