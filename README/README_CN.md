@@ -85,7 +85,7 @@ git clone https://github.com/Candlest/rublog-template.git
 `TOML Front Matter` 相关：
 
 - [ ] `TOML Front Matter` 缺省处理
-- [ ] 更多的 `TOML Front Matter`
+- [x] 更多的 `TOML Front Matter`
 - [ ] 通过命令行参数生成默认 `TOML Front Matter`
 - [x] 通过 `TOML Front Matter` 为文章排序
 - [x] 通过 `tags`, `category` 索引文章
@@ -99,8 +99,12 @@ git clone https://github.com/Candlest/rublog-template.git
 代码相关：
 
 - [ ] 认真地写错误处理，而不是 `unwarp()` 走天下
-- [ ] 自己写一个能够满足博客需求的server实现，或者找到兼具轻量与高性能的库
 - [ ] 整理项目，学习[ crates.io ](https://crates.io)的项目格式
+
+库相关：
+
+- [ ] 自己写一个能够满足博客需求的server实现，或者找到兼具轻量与高性能的库
+- [x] 使用 clap 库处理命令行参数
 
 文档相关：
 

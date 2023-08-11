@@ -88,7 +88,7 @@ The `/public` directory is the root directory of the generated website, just upl
 `TOML Front Matter` related:
 
 - [ ] `TOML Front Matter` default handling
-- [ ] More `TOML Front Matter`
+- [x] More `TOML Front Matter`
 - [ ] Generate default `TOML Front Matter` via command line arguments
 - [x] Sort articles by `TOML Front Matter`
 - [x] index articles by `tags` and `category`
@@ -102,8 +102,12 @@ Plugins and Extensibility:
 Code related:
 
 - [ ] Seriously write error handling instead of `unwarp()`.
-- [ ] Write a server implementation that can meet the needs of the blog, or find a library that is both lightweight and high-performance
 - [ ] Organize projects and learn the project format of [crates.io](https://crates.io)
+
+Library related:
+
+- [ ] Write a server implementation that can meet the needs of the blog, or find a library that is both lightweight and high-performance
+- [x] Use the clap library to process command line arguments
 
 Documentation related:
 
