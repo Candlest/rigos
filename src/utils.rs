@@ -91,21 +91,30 @@ pub fn read_markdown(md_file: &str) -> (String, String) {
     (toml_t.to_string(), body)
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Post {
     pub title: String,
     pub datetime: Datetime,
     pub tags: Vec<String>,
     pub category: String,
 }
-#[derive(Serialize, Deserialize, Debug)]
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PostString {
+    pub title: String,
+    pub datetime: String,
+    pub tags: Vec<String>,
+    pub category: String,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PostObject {
     pub title: String,
-    pub datetime: Datetime,
+    pub datetime: String,
     pub tags: Vec<String>,
     pub category: String,
     pub url: String,
 }
+
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config{

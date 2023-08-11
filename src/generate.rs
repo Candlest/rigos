@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use toml::value::Datetime;
 
-use crate::utils::{self, PostObject, Post};
+use crate::utils::{self, Post, PostObject, PostString};
 
 /* generate.rs
  * 使用它替代build.rs
@@ -67,7 +67,15 @@ impl PostGenerator {
 
         self.html_path = format!("{}/Post/{}.html", utils::PUBLIC_DIR, file_name);
         let post: Post = toml::from_str(&self.toml_info).unwrap();
-        context.insert("post", &post);
+        context.insert(
+            "post",
+            &PostString {
+                title: post.title,
+                datetime: post.datetime.to_string(),
+                tags: post.tags,
+                category: post.category,
+            },
+        );
         //render
         rendered = tera.render("post.html", &context).unwrap();
 
@@ -81,7 +89,7 @@ impl PostGenerator {
         let web_path = utils::path_local2web(&self.html_path);
         PostObject {
             title: p.title,
-            datetime: p.datetime,
+            datetime: p.datetime.to_string(),
             tags: p.tags,
             category: p.category,
             url: web_path,

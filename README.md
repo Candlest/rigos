@@ -1,11 +1,13 @@
 # README
 
+> ⚠️ This project is still in the early development stage and will undergo refactoring. It is not recommended to use before version 1.0! ! !
+
 - [README](#readme)
   - [About rublog](#about-rublog)
   - [demo DEMO](#demo-demo)
   - [Install](#install)
   - [use](#use)
-    - [Initialize from rublog-template](#initialize-from-rublog-template)
+    - [~~Initialize from rublog-template~~](#initialize-from-rublog-template)
     - [rublog command](#rublog-command)
     - [Publishing the web page](#publishing-the-web-page)
   - [Development Plan](#development-plan)
@@ -14,10 +16,8 @@
   - [Contributors](#contributors)
   - [license](#license)
 
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
-   
-   the Chinese version: [中文](./README/README_CN.md)
+the Chinese version: [中文](./README/README_CN.md)
 
 ## About rublog
 
@@ -53,7 +53,9 @@ sudo cp ./target/release/rublog /usr/bin/rublog
 
 ## use
 
-### Initialize from rublog-template
+### ~~Initialize from rublog-template~~
+
+> ⚠️ This part is not available recently.
 
 We can initialize our project from [rublog-template](https://github.com/Candlest/rublog-template), please see its [README](https://github.com/Candlest/rublog-template/blob/main/README.md) for details, so I won’t go into details here.
 
@@ -79,8 +81,6 @@ Lazy package: `clear`, `build`, `run` in one go: `rublog cbr`
 
 The `/public` directory is the root directory of the generated website, just upload it.
 
-> This design is also inspired by `hexo`.
-
 ## Development Plan
 
 > Since Candlest is preparing for the Chinese college entrance examination in 2024, the development progress is likely to be delayed.
@@ -90,11 +90,12 @@ The `/public` directory is the root directory of the generated website, just upl
 - [ ] `TOML Front Matter` default handling
 - [ ] More `TOML Front Matter`
 - [ ] Generate default `TOML Front Matter` via command line arguments
-- [ ] Sort articles by `TOML Front Matter`, and index articles by tags
+- [x] Sort articles by `TOML Front Matter`
+- [x] index articles by `tags` and `category`
 
 Plugins and Extensibility:
 
-- [ ] Use `config.toml` to manage webpage related parameters
+- [x] Use `config.toml` to manage webpage related parameters
 - [ ] Build a plugin management system and use the plugin management system to add `gitalk`, `highlight.js`, etc.
 - [ ] Build a theme management system and create default themes
 
@@ -106,7 +107,7 @@ Code related:
 
 Documentation related:
 
-- [ ] Generate list of contributors using GitHub Action
+- [x] Generate list of contributors
 - [ ] Disassemble README
 
 ## TOML Front Matter
@@ -137,9 +138,9 @@ We can set the properties of the `markdown` document through `TOML Front Matter`
 
 ## Contributors
 
-[@Candlest](https://github.com/Candlest)
+<a herf="https://github.com/Candlest/rublog/graphs/contributors"><img src="https://contrib.rocks/image?repo=Candlest/rublog" alt="Contributors" /></a>
 
-Any contributions are welcome!
+Contributions of any kind are welcome!
 
 ## license
 

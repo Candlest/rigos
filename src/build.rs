@@ -1,9 +1,9 @@
+use crate::utils::{self, get_path_list, read_markdown, Post, PostObject};
 use serde::{Deserialize, Serialize};
 use std::ops::Add;
-use toml::{Value, value::Datetime};
-use crate::utils::{self, PostObject, Post, get_path_list, read_markdown};
+use toml::{value::Datetime, Value};
 
-pub fn build_pages() {
+pub fn build_pages(theme: String) {
     let getfilelist: Vec<String> = get_path_list(utils::PAGE_DIR);
     for p in getfilelist.iter() {
         if p.ends_with("markdown") || p.ends_with("md") {
@@ -17,7 +17,7 @@ pub fn build_pages() {
             let web_path = utils::path_local2web(&html_file);
             //end add
             let (toml_t, body_h) = read_markdown(p);
-            create_html_from_page(html_file, toml_t, body_h);
+            create_html_from_page(html_file, toml_t, body_h, theme.clone());
         }
     }
 }
@@ -89,14 +89,20 @@ pub fn build_static_dir() {
 //     std::fs::write(html_path, rendered);
 // }
 
-pub fn create_html_from_page(html_path: String, toml_info: String, body_html: String) {
-    let tera = match tera::Tera::new(format!("{}/**/*.html", utils::TEMPLATE_DIR).as_str()) {
-        Ok(t) => t,
-        Err(e) => {
-            println!("Parsing error(s): {}", e);
-            ::std::process::exit(1);
-        }
-    };
+pub fn create_html_from_page(
+    html_path: String,
+    toml_info: String,
+    body_html: String,
+    theme: String,
+) {
+    let tera =
+        match tera::Tera::new(format!("{}/{}/**/*.html", utils::TEMPLATE_DIR, theme).as_str()) {
+            Ok(t) => t,
+            Err(e) => {
+                println!("Parsing error(s): {}", e);
+                ::std::process::exit(1);
+            }
+        };
     let mut context = tera::Context::new();
     let page: Page = toml::from_str(&toml_info).unwrap();
     //dbg!(post);
@@ -109,22 +115,23 @@ pub fn create_html_from_page(html_path: String, toml_info: String, body_html: St
     std::fs::write(html_path, rendered).unwrap();
 }
 
-pub fn create_index(post_urls: Vec<PostObject>, body_html: String) {
-    let html_path = format!("{}/{}", utils::PUBLIC_DIR, "index.html");
-    let tera = match tera::Tera::new(format!("{}/**/*.html", utils::TEMPLATE_DIR).as_str()) {
-        Ok(t) => t,
-        Err(e) => {
-            println!("Parsing error(s): {}", e);
-            ::std::process::exit(1);
-        }
-    };
+pub fn create_index(target_name: String, post_urls: Vec<PostObject>, body_html: String, theme: String) {
+    let html_path = format!("{}/{}", utils::PUBLIC_DIR, target_name);
+    let tera =
+        match tera::Tera::new(format!("{}/{}/**/*.html", utils::TEMPLATE_DIR, theme).as_str()) {
+            Ok(t) => t,
+            Err(e) => {
+                println!("Parsing error(s): {}", e);
+                ::std::process::exit(1);
+            }
+        };
     let mut context = tera::Context::new();
     //dbg!(post);
     context.insert("body", body_html.as_str());
     //dbg!(post_urls);
     context.insert("post_index", &post_urls);
     //render
-    let rendered = tera.render("index.html", &context).unwrap();
+    let rendered = tera.render(target_name.as_str(), &context).unwrap();
     //println!("{}", rendered);
     let folder = std::path::Path::new(&html_path).parent().unwrap();
     let _ = std::fs::create_dir_all(folder);
@@ -136,9 +143,7 @@ pub fn create_index(post_urls: Vec<PostObject>, body_html: String) {
     std::fs::write(html_path, rendered).unwrap();
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Page {
     title: String,
 }
-
