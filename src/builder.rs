@@ -1,6 +1,6 @@
-use std::{fs::{read_to_string, self}, path, clone};
+use std::{fs::{read_to_string, self}, path};
 
-use percent_encoding::percent_decode;
+
 use serde::{Deserialize, Serialize};
 use tera::Tera;
 use toml::value::Datetime;
@@ -48,11 +48,11 @@ impl Builder {
                     .expect("cannot read toml of markdown");
                 let hps = HProperty_String::new(hp.clone());
                 for ite in hp.tags {
-                    if (!self.tags.contains(&ite)) {
+                    if !self.tags.contains(&ite) {
                         self.tags.push(ite);
                     }
                 }
-                if (!self.categroies.contains(&hp.category)) {
+                if !self.categroies.contains(&hp.category) {
                     self.categroies.push(hp.category);
                 }
                 self.posts_index.push(hps);

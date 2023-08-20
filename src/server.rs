@@ -1,4 +1,4 @@
-use crate::{utils::{self, info, PUBLIC_DIR}, builder::Builder};
+use crate::{utils::{self, info}, builder::Builder};
 /*Listen TCP */
 pub async fn run_server() {
     info(utils::Info::RUN, "run at", "http://localhost:7878");
@@ -8,10 +8,10 @@ pub async fn run_server() {
      * 解决Route
      */
     let pro_path = String::from("./");
-    let mut builder = Builder::new(pro_path);
+    let builder = Builder::new(pro_path);
 
     let path = builder.config.public_dir;
-    let port = std::env::args()
+    let _port = std::env::args()
         .nth(2)
         .unwrap_or("7878".into())
         .parse::<u16>()

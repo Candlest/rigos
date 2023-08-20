@@ -1,6 +1,6 @@
-use colored::Colorize;
+
 use crate::{
-    utils::{get_path_list, read_markdown, PostObject, CONFIG_FILE, PAGE_DIR, STATIC_DIR}, builder::Builder,
+    builder::Builder,
 };
 
 use super::*;

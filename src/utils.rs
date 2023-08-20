@@ -76,7 +76,7 @@ pub(crate) fn get_folder_list(path: &str) -> Vec<String> {
         .into_iter()
         .filter_map(|e| e.ok())
     {
-        if (!e.metadata().unwrap().is_file() && !e.path().display().to_string().contains(".git")) {
+        if !e.metadata().unwrap().is_file() && !e.path().display().to_string().contains(".git") {
             crate::utils::info(
                 crate::utils::Info::GENERATE,
                 "found dectory",
