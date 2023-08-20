@@ -69,12 +69,31 @@ pub(crate) fn get_path_list(path: &str) -> Vec<String> {
     my_filename_list
 }
 
+pub(crate) fn get_folder_list(path: &str) -> Vec<String> {
+    let mut my_filename_list: Vec<String> = vec![];
+    // 只需要文件夹的名称及路径
+    for e in walkdir::WalkDir::new(path)
+        .into_iter()
+        .filter_map(|e| e.ok())
+    {
+        if (!e.metadata().unwrap().is_file() && !e.path().display().to_string().contains(".git")) {
+            crate::utils::info(
+                crate::utils::Info::GENERATE,
+                "found dectory",
+                e.path().display().to_string().as_str(),
+            );
+            my_filename_list.push(e.path().display().to_string());
+        }
+    }
+    my_filename_list
+}
+
 /* md 2 html
  * 我们只生成toml, body
 */
 pub fn read_markdown(md_file: &str) -> (String, String) {
     //println!("{}", md_file);
-    let raw_text = std::fs::read_to_string(md_file).unwrap();
+    let raw_text = std::fs::read_to_string(md_file).expect(md_file);
     let cut_raw: Vec<&str> = raw_text.split("---").collect();
     let toml_text = cut_raw[1];
     let toml_t = toml_text.clone();

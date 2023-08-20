@@ -1,18 +1,20 @@
-use std::{fs::read_to_string, path};
+use std::{fs::{read_to_string, self}, path, clone};
 
+use percent_encoding::percent_decode;
 use serde::{Deserialize, Serialize};
 use tera::Tera;
 use toml::value::Datetime;
 
-use crate::utils::{self, get_path_list, info, read_markdown, Config, Info};
+use crate::utils::{self, get_path_list, info, read_markdown, Config, Info, get_folder_list};
 
 #[derive(Clone)]
 pub struct Builder {
-    config: Config,
+    pub config: Config,
     project_root_path: String,
     posts_index: Vec<HProperty_String>,
     tags: Vec<String>,
     categroies: Vec<String>,
+    pub pub_folders: Vec<String>
 }
 
 impl Builder {
@@ -23,6 +25,18 @@ impl Builder {
             posts_index: Vec::new(),
             tags: Vec::new(),
             categroies: Vec::new(),
+            pub_folders: Vec::new()
+        }
+    }
+    pub fn check_pub(&mut self){
+        self.pub_folders = get_folder_list(&self.config.public_dir);
+        for p in self.pub_folders.iter() {
+            let pat = path::Path::new(p)
+            .file_stem()
+            .expect("cannot get file name")
+            .to_str()
+            .unwrap();
+            println!("{}", pat.to_string())
         }
     }
     pub fn pre_create_posts_index(&mut self) {
@@ -161,6 +175,7 @@ impl Builder {
         }
     }
     pub fn build_all(&self) {
+        fs::create_dir_all(format!("{}/Post", self.config.public_dir)).expect("");
         let getfilelist: Vec<String> = get_path_list(&self.config.page_dir);
         for p in getfilelist.iter() {
             if p.ends_with("markdown") || p.ends_with("md") {

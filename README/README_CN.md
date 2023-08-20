@@ -29,7 +29,7 @@ rublog`/rʌblɑg/`是一个使用`Rust`编写的静态博客生成器，实现�
 
 ## 演示DEMO
 
-我的博客：https://candlest.github.io/
+我的博客：https://candlest.github.io
 
 ![demo](./demo_png.png)
 
@@ -99,7 +99,7 @@ git clone https://github.com/Candlest/rublog-template.git
 代码相关：
 
 - [ ] 认真地写错误处理，而不是 `unwarp()` 走天下
-- [ ] 整理项目，学习[ crates.io ](https://crates.io)的项目格式
+- [ ] 整理项目，学习 [crates.io](https://crates.io) 的项目格式
 
 库相关：
 

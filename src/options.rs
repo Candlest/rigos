@@ -42,14 +42,19 @@ pub fn build() {
     handle_static.join().unwrap();
 }
 
+pub fn check(){
+    let pro_path = String::from("./");
+    let mut builder = Builder::new(pro_path);
+    builder.check_pub();
+}
+
 /*RUN PUBLIC_DIR on local web server*/
-pub fn run() {
+pub async fn run() {
     //utils::info(utils::Info::RUN, "now run", utils::PUBLIC_DIR);
-    server::run_server();
+    server::run_server().await;
 }
 
 pub fn init() {
     utils::info(utils::Info::INIT, "now init", "./");
     init::init();
 }
-//-------------

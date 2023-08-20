@@ -17,25 +17,31 @@ enum Commands {
     Run,
     /// Build & Run all in one
     BR,
+    /// Check
+    Check,
     /// Clear public/Post/
     Clear
 }
 
-fn main() {
+#[tokio::main]
+async fn main(){
     let cli = Cli::parse();
     match &cli.command {
         Some(Commands::Build) =>{
             options::build();
         },
         Some(Commands::Run) =>{
-            options::run();
+            options::run().await;
         },
         Some(Commands::BR) => {
             options::build();
-            options::run();
+            options::run().await;
         }
         Some(Commands::Clear) => {
             options::clear();
+        },
+        Some(Commands::Check) => {
+            options::check();
         },
         None => {}
     }
