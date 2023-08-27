@@ -59,11 +59,11 @@ pub(crate) fn get_path_list(path: &str) -> Vec<String> {
             //println!("{}", e.path().display());
             my_filename_list.push(e.path().display().to_string());
         } else {
-            crate::utils::info(
-                crate::utils::Info::GENERATE,
-                "found dectory",
-                e.path().display().to_string().as_str(),
-            );
+            // crate::utils::info(
+            //     crate::utils::Info::GENERATE,
+            //     "found dectory",
+            //     e.path().display().to_string().as_str(),
+            // );
         }
     }
     my_filename_list
@@ -77,11 +77,11 @@ pub(crate) fn get_folder_list(path: &str) -> Vec<String> {
         .filter_map(|e| e.ok())
     {
         if !e.metadata().unwrap().is_file() && !e.path().display().to_string().contains(".git") {
-            crate::utils::info(
-                crate::utils::Info::GENERATE,
-                "found dectory",
-                e.path().display().to_string().as_str(),
-            );
+            // crate::utils::info(
+            //     crate::utils::Info::GENERATE,
+            //     "found dectory",
+            //     e.path().display().to_string().as_str(),
+            // );
             my_filename_list.push(e.path().display().to_string());
         }
     }

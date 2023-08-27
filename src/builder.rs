@@ -1,20 +1,23 @@
-use std::{fs::{read_to_string, self}, path};
+use std::{
+    fs::{self, read_to_string},
+    path,
+};
 
-
+use prettytable::{Table, row, Row, Cell};
 use serde::{Deserialize, Serialize};
 use tera::Tera;
 use toml::value::Datetime;
 
-use crate::utils::{self, get_path_list, info, read_markdown, Config, Info, get_folder_list};
+use crate::utils::{self, get_folder_list, get_path_list, info, read_markdown, Config, Info};
 
 #[derive(Clone)]
 pub struct Builder {
     pub config: Config,
     project_root_path: String,
-    posts_index: Vec<HProperty_String>,
+    posts_index: Vec<HpropertyString>,
     tags: Vec<String>,
     categroies: Vec<String>,
-    pub pub_folders: Vec<String>
+    pub pub_folders: Vec<String>,
 }
 
 impl Builder {
@@ -25,28 +28,31 @@ impl Builder {
             posts_index: Vec::new(),
             tags: Vec::new(),
             categroies: Vec::new(),
-            pub_folders: Vec::new()
+            pub_folders: Vec::new(),
         }
     }
-    pub fn check_pub(&mut self){
+    pub fn check_pub(&mut self) {
         self.pub_folders = get_folder_list(&self.config.public_dir);
+        let mut table = Table::new();
+        table.add_row(row!["Folder"]);
         for p in self.pub_folders.iter() {
             let pat = path::Path::new(p)
-            .file_stem()
-            .expect("cannot get file name")
-            .to_str()
-            .unwrap();
-            println!("{}", pat.to_string())
+                .file_stem()
+                .expect("cannot get file name")
+                .to_str()
+                .unwrap();
+            table.add_row(row![pat]);
         }
+        table.printstd();
     }
     pub fn pre_create_posts_index(&mut self) {
         let getfilelist: Vec<String> = get_path_list(&self.config.source_dir);
         for p in getfilelist.iter() {
             if p.ends_with("markdown") || p.ends_with("md") {
-                utils::info(utils::Info::GENERATE, "add", p);
+                // utils::info(utils::Info::GENERATE, "add", p);
                 let hp: HProperty = toml::from_str(read_markdown(p).0.as_str())
                     .expect("cannot read toml of markdown");
-                let hps = HProperty_String::new(hp.clone());
+                let hps = HpropertyString::new(hp.clone());
                 for ite in hp.tags {
                     if !self.tags.contains(&ite) {
                         self.tags.push(ite);
@@ -60,19 +66,21 @@ impl Builder {
         }
         //utils::info(utils::Info::GENERATE, "add", &p);
     }
-    pub fn clear_post(&self) {
-        let p = format!(
-            "{}/{}/Post/",
-            self.project_root_path, self.config.public_dir
-        );
-        info(Info::CLEAR, "clearing", &self.config.public_dir);
-        std::fs::remove_dir_all(std::path::Path::new(p.as_str()));
+    pub fn clear(&self) {
+        for folder in self.pub_folders.clone() {
+            if folder != "public" {
+                fs::remove_dir_all(folder).expect("clear error");
+            }
+        }
+        let getfilelist: Vec<String> = get_path_list(&self.config.public_dir);
+        for p in getfilelist.iter() {
+            if !p.contains(".git"){
+                fs::remove_file(p).expect("clear error");
+            }
+        }
     }
-    pub fn generate_html(&self, item: HType, filename: String) {
-        // eprintln!(
-        //     "{}/{}/{}/*.html",
-        //     self.project_root_path, self.config.template_dir, self.config.theme
-        // );
+    pub fn generate_html(&self, item: HType, filename: String) -> Row {
+        let source_file = filename.clone();
         let tera = match Tera::new(
             format!(
                 "{}/{}/{}/*.html",
@@ -126,8 +134,8 @@ impl Builder {
         let htype_str = String::from(match item {
             HType::Page => {
                 html_output_path = format!(
-                    "{}/{}/{}.html",
-                    self.project_root_path, self.config.public_dir, property.url_name
+                    "{}/{}.html",
+                    self.config.public_dir, property.url_name
                 );
                 if self.config.page_templates.contains(&filename) {
                     filename
@@ -137,14 +145,16 @@ impl Builder {
             }
             HType::Post => {
                 html_output_path = format!(
-                    "{}/{}/Post/{}.html",
-                    self.project_root_path, self.config.public_dir, property.url_name
+                    "{}/Post/{}.html",
+                    self.config.public_dir, property.url_name
                 );
                 "post".to_string()
             }
         });
 
-        let hps = HProperty_String::new(property);
+        let public_file = html_output_path.clone();
+
+        let hps = HpropertyString::new(property);
         //let page:  = toml::from_str(&toml_info).unwrap();
         //dbg!(post);
         context.insert("body", body_html.as_str());
@@ -158,7 +168,9 @@ impl Builder {
             .unwrap();
         //let folder = std::path::Path::new(html_output_path.as_str());
         //let _ = std::fs::create_dir_all(folder);
-        std::fs::write(html_output_path, rendered);
+        std::fs::write(html_output_path, rendered).unwrap();
+
+        row![source_file, public_file]
     }
     pub fn build_static_dir(&self) {
         /*Static DIR */
@@ -169,7 +181,31 @@ impl Builder {
             let (st_file, st_file_dir) = utils::path_root2pub(&p);
             std::fs::create_dir_all(std::path::Path::new(st_file_dir.as_str())).unwrap(); //UNWRAP
             match std::fs::copy(stfile_path, std::path::Path::new(st_file.as_str())) {
-                Ok(_) => utils::info(utils::Info::GENERATE, "copied", &p),
+                Ok(_) => (),//utils::info(utils::Info::GENERATE, "copied", &p),
+                Err(_) => utils::info(utils::Info::GENERATE, "failed to copy", ""),
+            }
+        }
+
+        let theme_static = format!("{}/{}/static", self.config.template_dir, self.config.theme);
+        let getfilelist: Vec<String> = get_path_list(theme_static.as_str());
+        for p in getfilelist.iter() {
+            //utils::info(utils::Info::GENERATE, "copying", &p);
+            let stfile_path = std::path::Path::new(p);
+            let filename = stfile_path.file_name().expect("no file name");
+            let result = &p[theme_static.len()..p.len() - &filename.len()];
+
+            let result = format!(
+                "{}/{}",
+                self.config.public_dir,
+                result,
+            );
+
+            std::fs::create_dir_all(std::path::Path::new(result.as_str())).unwrap(); //UNWRAP
+
+            let result = format!("{}{}", result, filename.to_str().unwrap());
+
+            match std::fs::copy(stfile_path, std::path::Path::new(result.as_str())) {
+                Ok(_) => (),//utils::info(utils::Info::GENERATE, "copied", &result),
                 Err(_) => utils::info(utils::Info::GENERATE, "failed to copy", ""),
             }
         }
@@ -177,6 +213,8 @@ impl Builder {
     pub fn build_all(&self) {
         fs::create_dir_all(format!("{}/Post", self.config.public_dir)).expect("");
         let getfilelist: Vec<String> = get_path_list(&self.config.page_dir);
+        let mut table = Table::new();
+        table.add_row(row!["Page", "Public"]);
         for p in getfilelist.iter() {
             if p.ends_with("markdown") || p.ends_with("md") {
                 let pat = path::Path::new(p)
@@ -184,9 +222,13 @@ impl Builder {
                     .expect("cannot get file name")
                     .to_str()
                     .unwrap();
-                self.generate_html(HType::Page, pat.to_string())
+                
+                table.add_row(self.generate_html(HType::Page, pat.to_string()));
             }
         }
+        table.printstd();
+        let mut table = Table::new();
+        table.add_row(row!["Post", "Public"]);
         let getfilelist: Vec<String> = get_path_list(&self.config.source_dir);
         for p in getfilelist.iter() {
             if p.ends_with("markdown") || p.ends_with("md") {
@@ -195,9 +237,10 @@ impl Builder {
                     .expect("cannot get file name")
                     .to_str()
                     .unwrap();
-                self.generate_html(HType::Post, pat.to_string())
+                table.add_row(self.generate_html(HType::Post, pat.to_string()));
             }
         }
+        table.printstd();
     }
 }
 
@@ -215,7 +258,7 @@ pub struct HProperty {
     pub url_name: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct HProperty_String {
+pub struct HpropertyString {
     pub title: String,
     pub datetime: String,
     pub tags: Vec<String>,
@@ -230,9 +273,9 @@ impl HProperty {
     }
 }
 
-impl HProperty_String {
-    pub fn new(hp: HProperty) -> HProperty_String {
-        HProperty_String {
+impl HpropertyString {
+    pub fn new(hp: HProperty) -> HpropertyString {
+        HpropertyString {
             title: hp.title,
             datetime: hp.datetime.to_string(),
             tags: hp.tags,

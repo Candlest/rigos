@@ -24,8 +24,9 @@ use super::*;
 /*Clear PUBLIC_DIR */
 pub fn clear() {
     let pro_path = String::from("./");
-    let builder = Builder::new(pro_path);
-    builder.clear_post();
+    let mut builder = Builder::new(pro_path);
+    builder.check_pub();
+    builder.clear();
 }
 
 /*Generate PUBLIC_DIR*/
