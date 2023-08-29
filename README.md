@@ -7,7 +7,6 @@
   - [demo DEMO](#demo-demo)
   - [Install](#install)
   - [use](#use)
-    - [~~Initialize from rigos-template~~](#initialize-from-rigos-template)
     - [rigos command](#rigos-command)
     - [Publishing the web page](#publishing-the-web-page)
   - [Development Plan](#development-plan)
@@ -21,7 +20,7 @@ the Chinese version: [中文](./README/README_CN.md)
 
 ## About rigos
 
-rigos` /rʌblɑg/` is a static blog generator written in `Rust`, which implements the following functions:
+rigos is a generator of sites, writen in Rust, which implements the following functions:
 
 - Convert `markdown` to `html` via [pulldown cmark](https://github.com/raphlinus/pulldown-cmark)
 - Use [toml-rs](https://github.com/toml-rs/toml) to implement article properties similar to `YAML Front Matter`, see [TOML Front Matter](#TOML Front Matter)
@@ -34,7 +33,8 @@ rigos` /rʌblɑg/` is a static blog generator written in `Rust`, which implement
 
 My blog: https://candlest.github.io/
 
-![demo](./README/demo_png.png)
+![demo1](./README/demo_png.png)
+![demo_classless_css](./README/demo_classless_css.png)
 
 ## Install
 
@@ -52,16 +52,6 @@ sudo cp ./target/release/rigos /usr/bin/rigos
 ```
 
 ## use
-
-### ~~Initialize from rigos-template~~
-
-> ⚠️ This part is not available recently.
-
-We can initialize our project from [rigos-template](https://github.com/Candlest/rigos-template), please see its [README](https://github.com/Candlest/rigos-template/blob/main/README.md) for details, so I won’t go into details here.
-
-```bash
-git clone https://github.com/Candlest/rigos-template.git
-```
 
 ### rigos command
 
