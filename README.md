@@ -10,7 +10,9 @@
     - [rigos command](#rigos-command)
     - [Publishing the web page](#publishing-the-web-page)
   - [Development Plan](#development-plan)
-  - [TOML Front Matter](#toml-front-matter)
+  - [TOML Configs](#toml-configs)
+    - [config.toml](#configtoml)
+    - [TOML Front Matter](#toml-front-matter)
   - [relevant](#relevant)
   - [Contributors](#contributors)
   - [license](#license)
@@ -23,9 +25,9 @@ the Chinese version: [中文](./README/README_CN.md)
 rigos is a generator of sites, writen in Rust, which implements the following functions:
 
 - Convert `markdown` to `html` via [pulldown cmark](https://github.com/raphlinus/pulldown-cmark)
-- Use [toml-rs](https://github.com/toml-rs/toml) to implement article properties similar to `YAML Front Matter`, see [TOML Front Matter](#TOML Front Matter)
+- Use [toml-rs](https://github.com/toml-rs/toml) to implement article properties similar to `YAML Front Matter`
 - Implement `html` template rendering of [Django template language](https://docs.djangoproject.com/en/3.1/topics/templates/) through [tera](https://github.com/Keats/tera)
-- Currently using [web_server](https://github.com/Milesq/web_server) to preview the site (consider rewriting)
+- Currently using [warp](https://github.com/seanmonstar/warp) to preview the site (consider rewriting)
 
 [View our development plan] (#development plan).
 
@@ -104,21 +106,33 @@ Documentation related:
 - [x] Generate list of contributors
 - [ ] Disassemble README
 
-## TOML Front Matter
+## TOML Configs
 
-Currently, there are two `TOML Front Matter` formats: Post and Page.
+### config.toml
+
+at the root directory of your blog:
+
+``` rust
+
+    pub page_templates: Vec<String>,
+    pub public_dir: String,
+    pub source_dir: String,
+    pub static_dir: String,
+    pub page_dir: String,
+    pub template_dir: String,
+    pub theme: String,
+
+```
+
+### TOML Front Matter
 
 ```rust
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Post {
-     title: String,
-     datetime: Datetime,
-     tags: Vec<String>,
-     category: String,
-}
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Page {
-     title: String,
+pub struct HProperty {
+    pub title: String,
+    pub datetime: Datetime,
+    pub tags: Vec<String>,
+    pub category: String,
+    pub url_name: String,
 }
 ```
 

@@ -10,7 +10,9 @@
     - [rigos的命令](#rigos的命令)
     - [发布网页](#发布网页)
   - [开发计划](#开发计划)
-  - [TOML Front Matter](#toml-front-matter)
+  - [TOML Configs](#toml-configs)
+    - [config.toml](#configtoml)
+    - [TOML Front Matter](#toml-front-matter)
   - [相关](#相关)
   - [贡献者](#贡献者)
   - [许可证](#许可证)
@@ -101,21 +103,33 @@ sudo cp ./target/release/rigos /usr/bin/rigos
 - [x] 生成贡献者列表
 - [ ] 拆解README
 
-## TOML Front Matter
+## TOML Configs
 
-目前，有两种 `TOML Front Matter` 格式：Post 和 Page。
+### config.toml
+
+在博客项目的根目录：
+
+``` rust
+
+    pub page_templates: Vec<String>,
+    pub public_dir: String,
+    pub source_dir: String,
+    pub static_dir: String,
+    pub page_dir: String,
+    pub template_dir: String,
+    pub theme: String,
+
+```
+
+### TOML Front Matter
 
 ```rust
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Post {
-    title: String,
-    datetime: Datetime,
-    tags: Vec<String>,
-    category: String,
-}
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Page {
-    title: String,
+pub struct HProperty {
+    pub title: String,
+    pub datetime: Datetime,
+    pub tags: Vec<String>,
+    pub category: String,
+    pub url_name: String,
 }
 ```
 
