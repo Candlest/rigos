@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand};
 use std::time::{Duration, Instant};
-use rublog::options;
+use rigos::options;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]

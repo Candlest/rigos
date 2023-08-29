@@ -31,13 +31,6 @@ pub const TEMPLATE_DIR: &str = "template";
 /*config */
 pub const CONFIG_FILE: &str = "./config.toml";
 
-/* Thanks to web_server
- * We never use percent_encode again :-)
- */
-pub fn path_local2web(local_path: &str) -> String {
-    local_path[PUBLIC_DIR.len()..].to_string() /*非常方便！！！ */
-}
-
 pub fn path_root2pub(raw_path: &str) -> (String, String) {
     let path = std::path::Path::new(raw_path);
     let filename = path.file_name().unwrap();

@@ -3,12 +3,12 @@
 > ⚠️ This project is still in the early development stage and will undergo refactoring. It is not recommended to use before version 1.0! ! !
 
 - [README](#readme)
-  - [About rublog](#about-rublog)
+  - [About rigos](#about-rigos)
   - [demo DEMO](#demo-demo)
   - [Install](#install)
   - [use](#use)
-    - [~~Initialize from rublog-template~~](#initialize-from-rublog-template)
-    - [rublog command](#rublog-command)
+    - [~~Initialize from rigos-template~~](#initialize-from-rigos-template)
+    - [rigos command](#rigos-command)
     - [Publishing the web page](#publishing-the-web-page)
   - [Development Plan](#development-plan)
   - [TOML Front Matter](#toml-front-matter)
@@ -19,9 +19,9 @@
 
 the Chinese version: [中文](./README/README_CN.md)
 
-## About rublog
+## About rigos
 
-rublog` /rʌblɑg/` is a static blog generator written in `Rust`, which implements the following functions:
+rigos` /rʌblɑg/` is a static blog generator written in `Rust`, which implements the following functions:
 
 - Convert `markdown` to `html` via [pulldown cmark](https://github.com/raphlinus/pulldown-cmark)
 - Use [toml-rs](https://github.com/toml-rs/toml) to implement article properties similar to `YAML Front Matter`, see [TOML Front Matter](#TOML Front Matter)
@@ -45,37 +45,37 @@ Currently not packaged, it can be installed from source code.
 That is, get the source code from release or directly `git clone`, and use `cargo build --release` to compile. After the compilation is complete, add the binary file to the environment variable and use it from the command line. Here is an example for `linux`:
 
 ```bash
-git clone https://github.com/Candlest/rublog.git
-cd ./rublog
+git clone https://github.com/Candlest/rigos.git
+cd ./rigos
 cargo build --release
-sudo cp ./target/release/rublog /usr/bin/rublog
+sudo cp ./target/release/rigos /usr/bin/rigos
 ```
 
 ## use
 
-### ~~Initialize from rublog-template~~
+### ~~Initialize from rigos-template~~
 
 > ⚠️ This part is not available recently.
 
-We can initialize our project from [rublog-template](https://github.com/Candlest/rublog-template), please see its [README](https://github.com/Candlest/rublog-template/blob/main/README.md) for details, so I won’t go into details here.
+We can initialize our project from [rigos-template](https://github.com/Candlest/rigos-template), please see its [README](https://github.com/Candlest/rigos-template/blob/main/README.md) for details, so I won’t go into details here.
 
 ```bash
-git clone https://github.com/Candlest/rublog-template.git
+git clone https://github.com/Candlest/rigos-template.git
 ```
 
-### rublog command
+### rigos command
 
-The help list can be obtained through `rublog help` or `rublog`
+The help list can be obtained through `rigos help` or `rigos`
 
-Build the `/public` directory: `rublog build`
+Build the `/public` directory: `rigos build`
 
-Clean up the `/public` directory: `rublog clear`
+Clean up the `/public` directory: `rigos clear`
 
-Run from the `/public` directory: `rublog run`
+Run from the `/public` directory: `rigos run`
 
-Lazy package: `clear`, `build`, `run` in one go: `rublog cbr`
+Lazy package: `clear`, `build`, `run` in one go: `rigos cbr`
 
-> If you have used `hexo`, then `rublog` is very easy to use, because the `rublog` command is inspired by `hexo`.
+> If you have used `hexo`, then `rigos` is very easy to use, because the `rigos` command is inspired by `hexo`.
 
 ### Publishing the web page
 
@@ -142,7 +142,7 @@ We can set the properties of the `markdown` document through `TOML Front Matter`
 
 ## Contributors
 
-<a herf="https://github.com/Candlest/rublog/graphs/contributors"><img src="https://contrib.rocks/image?repo=Candlest/rublog" alt="Contributors" /></a>
+<a herf="https://github.com/Candlest/rigos/graphs/contributors"><img src="https://contrib.rocks/image?repo=Candlest/rigos" alt="Contributors" /></a>
 
 Contributions of any kind are welcome!
 

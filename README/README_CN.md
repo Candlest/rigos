@@ -1,14 +1,13 @@
-# README_CN
+# rigos
 
 > ⚠️ 这个项目仍在初期开发期，并且将经历重构，在1.0版本前不建议使用！！！
 
-- [README\_CN](#readme_cn)
-  - [关于rublog](#关于rublog)
+- [rigos](#rigos)
+  - [关于rigos](#关于rigos)
   - [演示DEMO](#演示demo)
   - [安装](#安装)
   - [使用](#使用)
-    - [~~从rublog-template初始化~~](#从rublog-template初始化)
-    - [rublog的命令](#rublog的命令)
+    - [rigos的命令](#rigos的命令)
     - [发布网页](#发布网页)
   - [开发计划](#开发计划)
   - [TOML Front Matter](#toml-front-matter)
@@ -16,14 +15,14 @@
   - [贡献者](#贡献者)
   - [许可证](#许可证)
 
-## 关于rublog
+## 关于rigos
 
-rublog`/rʌblɑg/`是一个使用`Rust`编写的静态博客生成器，实现了以下功能：
+rigos 是一个使用 `Rust` 编写的静态博客生成器，实现了以下功能：
 
-- 通过[pulldown cmark](https://github.com/raphlinus/pulldown-cmark)将`markdown`转换为`html`
-- 使用[toml-rs](https://github.com/toml-rs/toml)实现了类似`YAML Front Matter`的文章属性，查看[TOML Front Matter](#TOML Front Matter)
-- 通过[tera](https://github.com/Keats/tera)实现类[Django template language](https://docs.djangoproject.com/en/3.1/topics/templates/)的`html`模板渲染
-- 目前使用[web_server](https://github.com/Milesq/web_server)预览网站（考虑重写）
+- 通过 [pulldown cmark](https://github.com/raphlinus/pulldown-cmark) 将 `markdown` 转换为 `html`
+- 使用 [toml-rs](https://github.com/toml-rs/toml) 实现了类似 `YAML Front Matter` 的文章属性
+- 通过[tera](https://github.com/Keats/tera)实现类 [Django template language](https://docs.djangoproject.com/en/3.1/topics/templates/) 的`html`模板渲染
+- 目前使用 [warp](https://github.com/seanmonstar/warp) 预览网站
 
 [查看我们的开发计划](#开发计划)。
 
@@ -31,7 +30,8 @@ rublog`/rʌblɑg/`是一个使用`Rust`编写的静态博客生成器，实现�
 
 我的博客：https://candlest.github.io
 
-![demo](./demo_png.png)
+![demo1](./demo_png.png)
+![demo_classless_css](./demo_classless_css.png)
 
 ## 安装
 
@@ -42,37 +42,27 @@ rublog`/rʌblɑg/`是一个使用`Rust`编写的静态博客生成器，实现�
 即从release或者直接`git clone`获取源码，使用`cargo build --release`进行编译。编译完成后，将二进制文件加入环境变量，即可从命令行中使用。下面是一个适用于`linux`的例子：
 
 ```bash
-git clone https://github.com/Candlest/rublog.git
-cd ./rublog
+git clone https://github.com/Candlest/rigos.git
+cd ./rigos
 cargo build --release
-sudo cp ./target/release/rublog /usr/bin/rublog
+sudo cp ./target/release/rigos /usr/bin/rigos
 ```
 
 ## 使用
 
-### ~~从rublog-template初始化~~
+### rigos的命令
 
-> ⚠️ 这一部分暂不可用，请参照 Candlest 的 Github Page 。
+可以通过`rigos help`或者`rigos`获取帮助列表
 
-我们可以从[rublog-template](https://github.com/Candlest/rublog-template)初始化我们的项目，详情请看其[README](https://github.com/Candlest/rublog-template/blob/main/README.md)，这里不再赘述。
+构建`/public`目录：`rigos build`
 
-```bash
-git clone https://github.com/Candlest/rublog-template.git
-```
+清理`/public`目录：`rigos clear`
 
-### rublog的命令
+从`/public`目录运行：`rigos run`
 
-可以通过`rublog help`或者`rublog`获取帮助列表
+懒人包：`clear`, `build`, `run`一气呵成：`rigos cbr`
 
-构建`/public`目录：`rublog build`
-
-清理`/public`目录：`rublog clear`
-
-从`/public`目录运行：`rublog run`
-
-懒人包：`clear`, `build`, `run`一气呵成：`rublog cbr`
-
-> 如果你曾经使用过`hexo`，那么`rublog`是很容易上手的，因为`rublog`命令的灵感从`hexo`而来。
+> 如果你曾经使用过`hexo`，那么`rigos`是很容易上手的，因为`rigos`命令的灵感从`hexo`而来。
 
 ### 发布网页
 
@@ -139,7 +129,7 @@ pub struct Page {
 
 ## 贡献者
 
-[<a herf="https://github.com/Candlest/rublog/graphs/contributors"><img src="https://contrib.rocks/image?repo=Candlest/rublog" alt="Contributors" /></a>](https://github.com/Candlest)
+[<a herf="https://github.com/Candlest/rigos/graphs/contributors"><img src="https://contrib.rocks/image?repo=Candlest/rigos" alt="Contributors" /></a>](https://github.com/Candlest)
 
 欢迎任何的贡献！
 

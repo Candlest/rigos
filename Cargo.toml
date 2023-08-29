@@ -1,14 +1,14 @@
 [package]
-name = "rublog"
+name = "rigos"
 authors = ["Candlest<candlest1112@gmail.com>"]
-version = "0.1.1"
+version = "0.1.4"
 edition = "2021"
-description = "rublog is a static blog generator written in Rust"
+description = "rigos is a generator of sites, writen in Rust"
 readme = "README.md"
 license = "MIT"
 keywords = ["static-site-generator"]
-repository = "https://github.com/candlest/rublog/"
-homepage = "https://github.com/candlest/rublog/"
+repository = "https://github.com/Candlest/rigos"
+homepage = "https://github.com/Candlest/rigos"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -1324,8 +1324,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e5ea92a5b6195c6ef2a0295ea818b312502c6fc94dde986c5553242e18fd4ce2"
 
 [[package]]
-name = "rublog"
-version = "0.1.1"
+name = "rigos"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "clap",

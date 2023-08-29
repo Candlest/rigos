@@ -1,25 +1,7 @@
 
 use crate::{
-    builder::Builder,
+    builder::Builder, utils, server, init,
 };
-
-use super::*;
-/*Print Help List */
-// pub fn help() {
-//     /*Help List*/
-//     let text: &'static str = "
-//         rublog - A static blog generator powered by Rust
-//         ------------------------------------------------
-//         help    : show help
-//         build   : generator site files from markdown
-//         clear   : clear generated files
-//         run     : run this blog site on local server
-//         cbr     : clear, build and run
-//         ------------------------------------------------
-//         Get more information from https://github.com/Candlest/rublog
-//         ";
-//     println!("{}", text.green());
-// }
 
 /*Clear PUBLIC_DIR */
 pub fn clear() {
