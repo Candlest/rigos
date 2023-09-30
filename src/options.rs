@@ -22,6 +22,7 @@ pub fn build() {
     });
     builder_o.pre_create_posts_index();
     builder_o.build_all();
+    builder_o.build_feed();
     handle_static.join().unwrap();
 }
 

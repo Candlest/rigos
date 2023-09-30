@@ -17,7 +17,6 @@ tera = {version = "1.19.0", features = ["builtins"]}
 colored = "2.0.4"
 percent-encoding = "2.3.0"
 walkdir = "2.3.3"
-pulldown-cmark = "0.9.3"
 anyhow = "1.0.72"
 serde = { version = "1.0.171", features = ["derive"] }
 toml = "0.7.6"
@@ -25,3 +24,4 @@ clap = { version = "4.3.21", features = ["derive"] }
 warp = "0.2.4"
 tokio = { version = "0.2.22", features = ["macros"] }
 prettytable-rs = "0.10.0"
+markdown = "1.0.0-alpha.14"

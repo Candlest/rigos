@@ -1,4 +1,5 @@
 use colored::Colorize;
+use markdown::{Options, ParseOptions, CompileOptions};
 use serde::{Deserialize, Serialize};
 use toml::value::Datetime;
 
@@ -96,10 +97,23 @@ pub fn read_markdown(md_file: &str) -> (String, String) {
     for md in md_raw {
         md_text.push_str(&md);
     }
-    let parser = pulldown_cmark::Parser::new_ext(&md_text, pulldown_cmark::Options::all());
-    let mut body = String::new();
-    pulldown_cmark::html::push_html(&mut body, parser);
+    
+
+    // let parser = pulldown_cmark::Parser::new_ext(&md_text, pulldown_cmark::Options::all());
+    // let mut body = String::new();
+    // pulldown_cmark::html::push_html(&mut body, parser);
     /*BODY is OK */
+
+    let body = markdown::to_html_with_options(
+        &md_text,
+        &Options {
+            parse: ParseOptions::gfm(),
+            compile: CompileOptions {
+              allow_dangerous_html: true,
+              ..CompileOptions::default()
+            }}
+    ).expect("err markdown");
+
     (toml_t.to_string(), body)
 }
 

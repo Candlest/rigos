@@ -20,7 +20,7 @@ enum Commands {
     BR,
     /// Check
     Check,
-    /// Clear public/Post/
+    /// Clear public/
     Clear
 }
 

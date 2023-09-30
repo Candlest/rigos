@@ -3,7 +3,7 @@ use std::{
     path,
 };
 
-use prettytable::{Table, row, Row, Cell};
+use prettytable::{row, Cell, Row, Table};
 use serde::{Deserialize, Serialize};
 use tera::Tera;
 use toml::value::Datetime;
@@ -74,7 +74,7 @@ impl Builder {
         }
         let getfilelist: Vec<String> = get_path_list(&self.config.public_dir);
         for p in getfilelist.iter() {
-            if !p.contains(".git"){
+            if !p.contains(".git") {
                 fs::remove_file(p).expect("clear error");
             }
         }
@@ -133,10 +133,7 @@ impl Builder {
 
         let htype_str = String::from(match item {
             HType::Page => {
-                html_output_path = format!(
-                    "{}/{}.html",
-                    self.config.public_dir, property.url_name
-                );
+                html_output_path = format!("{}/{}.html", self.config.public_dir, property.url_name);
                 if self.config.page_templates.contains(&filename) {
                     filename
                 } else {
@@ -144,10 +141,8 @@ impl Builder {
                 }
             }
             HType::Post => {
-                html_output_path = format!(
-                    "{}/Post/{}.html",
-                    self.config.public_dir, property.url_name
-                );
+                html_output_path =
+                    format!("{}/Post/{}.html", self.config.public_dir, property.url_name);
                 "post".to_string()
             }
         });
@@ -181,7 +176,7 @@ impl Builder {
             let (st_file, st_file_dir) = utils::path_root2pub(&p);
             std::fs::create_dir_all(std::path::Path::new(st_file_dir.as_str())).unwrap(); //UNWRAP
             match std::fs::copy(stfile_path, std::path::Path::new(st_file.as_str())) {
-                Ok(_) => (),//utils::info(utils::Info::GENERATE, "copied", &p),
+                Ok(_) => (), //utils::info(utils::Info::GENERATE, "copied", &p),
                 Err(_) => utils::info(utils::Info::GENERATE, "failed to copy", ""),
             }
         }
@@ -194,18 +189,14 @@ impl Builder {
             let filename = stfile_path.file_name().expect("no file name");
             let result = &p[theme_static.len()..p.len() - &filename.len()];
 
-            let result = format!(
-                "{}/{}",
-                self.config.public_dir,
-                result,
-            );
+            let result = format!("{}/{}", self.config.public_dir, result,);
 
             std::fs::create_dir_all(std::path::Path::new(result.as_str())).unwrap(); //UNWRAP
 
             let result = format!("{}{}", result, filename.to_str().unwrap());
 
             match std::fs::copy(stfile_path, std::path::Path::new(result.as_str())) {
-                Ok(_) => (),//utils::info(utils::Info::GENERATE, "copied", &result),
+                Ok(_) => (), //utils::info(utils::Info::GENERATE, "copied", &result),
                 Err(_) => utils::info(utils::Info::GENERATE, "failed to copy", ""),
             }
         }
@@ -222,7 +213,7 @@ impl Builder {
                     .expect("cannot get file name")
                     .to_str()
                     .unwrap();
-                
+
                 table.add_row(self.generate_html(HType::Page, pat.to_string()));
             }
         }
@@ -240,7 +231,32 @@ impl Builder {
                 table.add_row(self.generate_html(HType::Post, pat.to_string()));
             }
         }
-        table.printstd();
+        table.print_tty(false);
+    }
+    pub fn build_feed(&self) {
+        let tera = match Tera::new(
+            format!(
+                "{}/{}/{}/*.html",
+                self.project_root_path, self.config.template_dir, self.config.theme
+            )
+            .as_str(),
+        ) {
+            Ok(t) => t,
+            Err(e) => {
+                println!("Parsing error(s): {}", e);
+                ::std::process::exit(1);
+            }
+        };
+        let mut context = tera::Context::new();
+        context.insert("post_index", &self.posts_index);
+        context.insert("tags", &self.tags);
+        context.insert("categories", &self.categroies);
+        //render
+        let rendered = tera.render("feed.html", &context).unwrap();
+        //let folder = std::path::Path::new(html_output_path.as_str());
+        //let _ = std::fs::create_dir_all(folder);
+        let html_output_path = format!("{}/feed.xml", self.config.public_dir);
+        std::fs::write(html_output_path, rendered).unwrap();
     }
 }
 
