@@ -1,0 +1,10 @@
+# site
+site_title="Candlest's Blog"
+site_link="candlest.github.io"
+site_description="Candlest 的博客"
+
+# theme
+theme="default"
+
+# pages (except index)
+pages=["404", "friends", "about"]

@@ -1,54 +1,65 @@
-use clap::{Parser, Subcommand};
-use std::time::{Duration, Instant};
-use rigos::options;
+mod config;
+mod deploy;
+mod io;
+mod local_server;
+mod render;
+
+use clap::{arg, Arg, Command, Parser, Subcommand};
+use deploy::deploy;
+use std::time::Instant; // counting // args
 
 #[derive(Parser)]
-#[command(author, version, about, long_about = None)]
+#[command(
+    name = "rigos",
+    about = "Rigos is a generator of sites, written with Rust",
+    version = "1.0"
+)]
 struct Cli {
-
     #[command(subcommand)]
     command: Option<Commands>,
 }
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Generate the static site
-    Build,
-    /// Run a local web server
-    Run,
-    /// Build & Run all in one
-    BR,
-    /// Check
-    Check,
-    /// Clear public/
-    Clear
+    /// render html site from templates & sources
+    render,
+    /// preview the static site from localhost
+    preview,
+    /// render & preview
+    rap,
+    /// deploy the static site to remote
+    deploy,
 }
 
-#[tokio::main]
-async fn main(){
+#[actix_web::main]
+async fn main() {
     let start = Instant::now();
-    let cli = Cli::parse();
+    // args
+    let cli = Cli::parse(); // get cli
     match &cli.command {
-        Some(Commands::Build) =>{
-            options::build();
-        },
-        Some(Commands::Run) =>{
-            options::run().await;
-        },
-        Some(Commands::BR) => {
-            options::build();
-            options::run().await;
+        Some(Commands::render) => {
+            io::info("rendering...");
+            render::render();
         }
-        Some(Commands::Clear) => {
-            options::clear();
-        },
-        Some(Commands::Check) => {
-            options::check();
-        },
-        None => {}
+        Some(Commands::preview) => {
+            io::info("preview at http://localhost:8080");
+            io::info("you can exit with CTRL + C");
+            let _ = local_server::preview().await;
+        }
+        Some(Commands::rap) => {
+            io::info("rendering & previewing...");
+            render::render();
+            io::info("preview at http://localhost:8080");
+            io::info("you can exit with CTRL + C");
+            let _ = local_server::preview().await;
+        }
+        Some(Commands::deploy) => {
+            io::info("deploying...");
+            deploy::deploy();
+        }
+        None => io::info("please input subcommand or use `rigos help` to get more information..."),
     }
 
     let duration = start.elapsed();
-
-    println!("Time elapsed: {:?}", duration);
+    io::info(&format!("Exit, with {} seconds", duration.as_secs_f32()));
 }

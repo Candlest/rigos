@@ -1,27 +1,21 @@
 [package]
 name = "rigos"
-authors = ["Candlest<candlest1112@gmail.com>"]
-version = "0.1.4"
+version = "0.1.0"
 edition = "2021"
-description = "rigos is a generator of sites, writen in Rust"
-readme = "README.md"
-license = "MIT"
-keywords = ["static-site-generator"]
-repository = "https://github.com/Candlest/rigos"
-homepage = "https://github.com/Candlest/rigos"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tera = {version = "1.19.0", features = ["builtins"]}
-colored = "2.0.4"
-percent-encoding = "2.3.0"
-walkdir = "2.3.3"
-anyhow = "1.0.72"
-serde = { version = "1.0.171", features = ["derive"] }
-toml = "0.7.6"
-clap = { version = "4.3.21", features = ["derive"] }
-warp = "0.2.4"
-tokio = { version = "0.2.22", features = ["macros"] }
-prettytable-rs = "0.10.0"
-markdown = "1.0.0-alpha.14"
+actix-files = "0.6.6"
+actix-web = "4.7.0"
+clap = {version="4.5.7",features = ["derive"]}
+colored = "2.1.0"
+markdown = "1.0.0-alpha.17"
+serde = {version="1.0.203",features = ["derive"]}
+serde_json = "1.0.117"
+toml = "0.8.14"
+walkdir = "2.5.0"
+minijinja = "2.0.2"
+chrono = { version = "0.4.38", features = ["serde"] }
+
+[build-dependencies]
+copy_to_output = "2.1.0"
+glob = "0.3"
