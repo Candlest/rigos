@@ -12,6 +12,7 @@ If you want to use Rigos, please understand the following information:
 Advantages of Rigos:
 - Lightweight single-file, avoiding cumbersome installation processes and environment variable configurations
 - High performance, website rendering speed is extremely fast
+
 Disadvantages of Rigos:
 - Currently lacks flexibility, with poor customizability
 
