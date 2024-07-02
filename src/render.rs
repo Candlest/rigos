@@ -8,6 +8,7 @@ use markdown::{self, CompileOptions, Options};
 use minijinja::{context, Environment};
 use toml;
 use std::collections::{HashMap, LinkedList};
+use std::fs::create_dir_all;
 use std::{fmt, fs};
 use std::io::Read;
 
@@ -52,6 +53,10 @@ pub fn render() {
     env.add_template("base", &template_base).unwrap();
 
     // 渲染文章
+
+    // 确保文件夹存在
+    let _ = create_dir_all("pub/post");
+
     let template_post = read_template_file(format!("theme/{}/post.html", theme).as_str()).unwrap();
     env.add_template("post", &template_post).unwrap();
     let template_post = env.get_template("post").unwrap();
