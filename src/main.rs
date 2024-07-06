@@ -70,10 +70,10 @@ async fn main() {
         Some(Commands::New { type_, name }) => {
             match type_.as_str() {
                 "post" => {
-                    create::crate_new_post(name.to_string())
+                    create::create_new_post(name.to_string())
                 }
                 "page" =>{
-                    create::crate_new_page(name.to_string());
+                    create::create_new_page(name.to_string());
                 }
                 _ => {
                     // 处理所有未明确匹配的情况

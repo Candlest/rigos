@@ -57,19 +57,3 @@ pub fn copy_dir_all(p1: String, p2: String) {
         }
     }
 }
-
-pub(crate) fn separate_path_and_filename(input: &str) -> (Option<PathBuf>, Option<String>) {
-    let path = Path::new(input);
-    
-    // 分离路径和文件名
-    let filename = path.file_name().and_then(|s| s.to_str()).map(String::from);
-    let parent = if path.has_root() {
-        // 如果路径有根（例如以 '/' 开头），则获取所有父目录
-        path.parent()
-    } else {
-        // 否则，没有父目录
-        None
-    };
-
-    (parent.map(PathBuf::from), filename)
-}
