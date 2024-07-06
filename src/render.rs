@@ -9,6 +9,7 @@ use minijinja::{context, Environment};
 use toml;
 use std::collections::{HashMap, LinkedList};
 use std::fs::create_dir_all;
+use std::path::{Path, PathBuf};
 use std::{fmt, fs};
 use std::io::Read;
 
@@ -62,53 +63,56 @@ pub fn render() {
     let template_post = env.get_template("post").unwrap();
     // let mut list: Vec<Post> = Vec::new();
     let mut list: Vec<Post> = Vec::new();
-    let entries = fs::read_dir("posts").unwrap();
-    for entry in entries {
-        let entry = entry;
-        let path = entry.unwrap().path();
-
-        if path.is_file() {
+    let posts_dir = Path::new("posts");
+    let mut list: Vec<Post> = Vec::new();
+    let posts = read_posts_recursively(posts_dir);
+    for post_path in posts {
+        if post_path.is_file() {
             // 读取文件内容
-            let content = fs::read_to_string(&path).unwrap();
-
+            let content = fs::read_to_string(&post_path).unwrap();
+    
             // 按%%%%%%分割内容
             let parts: Vec<&str> = content.split("%%%%%%").collect();
-
+    
             if parts.len() == 2 {
-                let toml_content = parts[0].trim().to_string();
-                let markdown_content = parts[1].trim().to_string();
-                let markdown_content = markdown::to_html_with_options(
-                    &markdown_content.as_str(),
+                let toml_content = parts[0].trim();
+                let markdown_content = parts[1].trim();
+                let markdown_content_html = markdown::to_html_with_options(
+                    &markdown_content,
                     &Options {
                         compile: CompileOptions {
                             allow_dangerous_html: true,
                             allow_dangerous_protocol: true,
-                            ..CompileOptions::gfm()
+                            ..CompileOptions::default()
                         },
-                        ..Options::gfm()
+                        ..Options::default()
                     },
                 )
                 .unwrap();
-
-                // 保存
-                let info:PostInfo = read_toml_to_config(&toml_content).unwrap();
+    
+                // 从 TOML 元数据解析 PostInfo
+                let info: PostInfo = read_toml_to_config(toml_content).unwrap();
+    
+                // 创建 Post 对象
                 let post_obj = Post {
                     info: info.clone(),
-                    contents: markdown_content.clone(),
+                    contents: markdown_content_html.clone(),
                 };
-                //list.push(post_obj.clone());
                 list.push(post_obj);
-
-                // 输出
+    
+                // 使用模板渲染 HTML
                 let post_html = template_post
                     .render(context! {
-                        contents => markdown_content,
-                        info => info
+                        contents => markdown_content_html.clone(),
+                        info => info.clone(),
                     })
                     .unwrap();
-                let _ = io::write_to_file(&format!("pub/post/{}.html", info.filename), &post_html);
+    
+                // 写入 HTML 文件
+                let filename = info.filename.clone();
+                let _ = io::write_to_file(&format!("pub/post/{}.html", filename), &post_html);
             } else {
-                eprintln!("File does not contain '%%%%%%' separator: {:?}", path);
+                eprintln!("File does not contain '%%%%%%' separator: {:?}", post_path);
             }
         }
     }
@@ -271,3 +275,20 @@ fn read_toml_to_config(toml_str: &str) -> Result<PostInfo, toml::de::Error> {
     Ok(article)
 }
 
+fn read_posts_recursively(dir: &Path) -> Vec<PathBuf> {
+    let mut posts = Vec::new();
+    if dir.is_dir() {
+        let entries = fs::read_dir(dir).unwrap();
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                // 如果是目录，递归调用
+                posts.append(&mut read_posts_recursively(&path));
+            } else if path.is_file() {
+                // 如果是文件，添加到列表
+                posts.push(path);
+            }
+        }
+    }
+    posts
+}

@@ -3,6 +3,7 @@ mod deploy;
 mod io;
 mod local_server;
 mod render;
+mod create;
 
 use clap::{arg, Arg, Command, Parser, Subcommand};
 use deploy::deploy;
@@ -21,14 +22,23 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// create posts & pages
+    #[command(name = "new")]
+    New {
+        #[arg(short = 't', long = "type", help = "The type of the new item (e.g., post, page)")]
+        type_: String, // 使用 type_ 来避免与 Rust 的关键字 type 冲突
+
+        #[arg(short = 'n', long = "name", help = "The name of the new item")]
+        name: String,
+    },
     /// render html site from templates & sources
-    render,
+    Render,
     /// preview the static site from localhost
-    preview,
+    Preview,
     /// render & preview
-    rap,
+    Rap,
     /// deploy the static site to remote
-    deploy,
+    Deploy,
 }
 
 #[actix_web::main]
@@ -37,25 +47,39 @@ async fn main() {
     // args
     let cli = Cli::parse(); // get cli
     match &cli.command {
-        Some(Commands::render) => {
+        Some(Commands::Render) => {
             io::info("rendering...");
             render::render();
         }
-        Some(Commands::preview) => {
+        Some(Commands::Preview) => {
             io::info("preview at http://localhost:8080");
             io::info("you can exit with CTRL + C");
             let _ = local_server::preview().await;
         }
-        Some(Commands::rap) => {
+        Some(Commands::Rap) => {
             io::info("rendering & previewing...");
             render::render();
             io::info("preview at http://localhost:8080");
             io::info("you can exit with CTRL + C");
             let _ = local_server::preview().await;
         }
-        Some(Commands::deploy) => {
-            io::info("deploying...");
+        Some(Commands::Deploy) => {
+            io::info("deploying to remote...");
             deploy::deploy();
+        }
+        Some(Commands::New { type_, name }) => {
+            match type_.as_str() {
+                "post" => {
+                    create::crate_new_post(name.to_string())
+                }
+                "page" =>{
+                    create::crate_new_page(name.to_string());
+                }
+                _ => {
+                    // 处理所有未明确匹配的情况
+                    io::errstr("Error: Unsupported type");
+                }
+            }
         }
         None => io::info("please input subcommand or use `rigos help` to get more information..."),
     }
