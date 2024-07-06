@@ -1,13 +1,12 @@
 use crate::config;
-use crate::config::Config;
 use crate::io;
-use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
+use chrono::{NaiveDateTime};
 use serde::de::{self, Visitor};
 use serde::{Deserialize, Deserializer, Serialize};
 use markdown::{self, CompileOptions, Options};
 use minijinja::{context, Environment};
 use toml;
-use std::collections::{HashMap, LinkedList};
+use std::collections::{HashMap};
 use std::fs::create_dir_all;
 use std::path::{Path, PathBuf};
 use std::{fmt, fs};
@@ -62,7 +61,7 @@ pub fn render() {
     env.add_template("post", &template_post).unwrap();
     let template_post = env.get_template("post").unwrap();
     // let mut list: Vec<Post> = Vec::new();
-    let mut list: Vec<Post> = Vec::new();
+    let list: Vec<Post> = Vec::new();
     let posts_dir = Path::new("posts");
     let mut list: Vec<Post> = Vec::new();
     let posts = read_posts_recursively(posts_dir);

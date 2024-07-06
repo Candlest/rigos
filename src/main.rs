@@ -5,8 +5,7 @@ mod local_server;
 mod render;
 mod create;
 
-use clap::{arg, Arg, Command, Parser, Subcommand};
-use deploy::deploy;
+use clap::{arg, Parser, Subcommand};
 use std::time::Instant; // counting // args
 
 #[derive(Parser)]

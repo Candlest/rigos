@@ -1,7 +1,7 @@
 use colored::{self, Colorize};
 use std::fs::{self, create_dir_all, File};
 use std::io::{self, Read, Write};
-use std::path::{Path, PathBuf};
+use std::path::{Path};
 use walkdir::WalkDir;
 
 pub fn info(s: &str) {
