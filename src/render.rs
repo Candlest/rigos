@@ -163,10 +163,10 @@ pub fn render() {
         let content = io::read_file_contents(&format!("{}.md", page))
             .unwrap()
             .to_string();
-        let parts: Vec<&str> = content.split("%%%%%%").collect();
-        if parts.len() == 2 {
-            let toml_content = parts[0].trim().to_string();
-            let markdown_content = parts[1].trim().to_string();
+        let parts: Vec<&str> = content.split("++++++").collect();
+        if parts.len() == 3 {
+            let toml_content = parts[1].trim().to_string();
+            let markdown_content = parts[2].trim().to_string();
             let markdown_content = markdown::to_html_with_options(
                 &markdown_content.as_str(),
                 &Options {
@@ -191,7 +191,7 @@ pub fn render() {
                 .unwrap();
             let _ = io::write_to_file(&format!("pub/{}.html", info.filename), &page_html);
         } else {
-            eprintln!("File does not contain '%%%%%%' separator: {:?}", page);
+            eprintln!("File does not contain right '++++++' separator: {:?}", page);
         }
     }
 
