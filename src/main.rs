@@ -21,22 +21,21 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// create posts & pages
-    #[command(name = "new")]
+    /// Create a new item with type and name
     New {
-        #[arg(short = 't', long = "type", help = "The type of the new item (e.g., post, page)")]
-        type_: String, // 使用 type_ 来避免与 Rust 的关键字 type 冲突
+        #[arg(required = true, help = "The type of the new item (e.g., post, page)")]
+        type_: String,
 
-        #[arg(short = 'n', long = "name", help = "The name of the new item")]
+        #[arg(required = true, help = "The name of the new item")]
         name: String,
     },
-    /// render html site from templates & sources
+    /// Render html site from templates & sources
     Render,
-    /// preview the static site from localhost
+    /// Preview the static site from localhost
     Preview,
-    /// render & preview
+    /// Render & preview
     Rap,
-    /// deploy the static site to remote
+    /// Deploy the static site to remote
     Deploy,
 }
 

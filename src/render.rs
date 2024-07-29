@@ -70,12 +70,12 @@ pub fn render() {
             // 读取文件内容
             let content = fs::read_to_string(&post_path).unwrap();
     
-            // 按%%%%%%分割内容
-            let parts: Vec<&str> = content.split("%%%%%%").collect();
+            // 按 ++++++ 分割内容
+            let parts: Vec<&str> = content.split("++++++").collect();
     
-            if parts.len() == 2 {
-                let toml_content = parts[0].trim();
-                let markdown_content = parts[1].trim();
+            if parts.len() == 3 {
+                let toml_content = parts[1].trim();
+                let markdown_content = parts[2].trim();
                 let markdown_content_html = markdown::to_html_with_options(
                     &markdown_content,
                     &Options {
@@ -111,7 +111,7 @@ pub fn render() {
                 let filename = info.filename.clone();
                 let _ = io::write_to_file(&format!("pub/post/{}.html", filename), &post_html);
             } else {
-                eprintln!("File does not contain '%%%%%%' separator: {:?}", post_path);
+                eprintln!("File does not contain right '++++++' separator: {:?}", post_path);
             }
         }
     }
