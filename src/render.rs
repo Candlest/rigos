@@ -1,16 +1,16 @@
 use crate::config;
 use crate::io;
-use chrono::{NaiveDateTime};
-use serde::de::{self, Visitor};
-use serde::{Deserialize, Deserializer, Serialize};
+use chrono::NaiveDateTime;
 use markdown::{self, CompileOptions, Options};
 use minijinja::{context, Environment};
-use toml;
-use std::collections::{HashMap};
+use serde::de::{self, Visitor};
+use serde::{Deserialize, Deserializer, Serialize};
+use std::collections::HashMap;
 use std::fs::create_dir_all;
+use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::{fmt, fs};
-use std::io::Read;
+use toml;
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct Page {
@@ -69,10 +69,10 @@ pub fn render() {
         if post_path.is_file() {
             // 读取文件内容
             let content = fs::read_to_string(&post_path).unwrap();
-    
+
             // 按 ++++++ 分割内容
             let parts: Vec<&str> = content.split("++++++").collect();
-    
+
             if parts.len() == 3 {
                 let toml_content = parts[1].trim();
                 let markdown_content = parts[2].trim();
@@ -88,17 +88,17 @@ pub fn render() {
                     },
                 )
                 .unwrap();
-    
+
                 // 从 TOML 元数据解析 PostInfo
                 let info: PostInfo = read_toml_to_config(toml_content).unwrap();
-    
+
                 // 创建 Post 对象
                 let post_obj = Post {
                     info: info.clone(),
                     contents: markdown_content_html.clone(),
                 };
                 list.push(post_obj);
-    
+
                 // 使用模板渲染 HTML
                 let post_html = template_post
                     .render(context! {
@@ -106,12 +106,15 @@ pub fn render() {
                         info => info.clone(),
                     })
                     .unwrap();
-    
+
                 // 写入 HTML 文件
                 let filename = info.filename.clone();
                 let _ = io::write_to_file(&format!("pub/post/{}.html", filename), &post_html);
             } else {
-                eprintln!("File does not contain right '++++++' separator: {:?}", post_path);
+                eprintln!(
+                    "File does not contain right '++++++' separator: {:?}",
+                    post_path
+                );
             }
         }
     }
@@ -123,12 +126,14 @@ pub fn render() {
     let template_feed = read_template_file(format!("theme/{}/feed.xml", theme).as_str()).unwrap();
     env.add_template("feed", &template_feed).unwrap();
     let template_feed = env.get_template("feed").unwrap();
-    let feed_xml = template_feed.render(context! {
-        site_title => cfg.site_title,
-        site_link => cfg.site_link,
-        site_description => cfg.site_description,
-        posts => list.clone()
-    }).unwrap();
+    let feed_xml = template_feed
+        .render(context! {
+            site_title => cfg.site_title,
+            site_link => cfg.site_link,
+            site_description => cfg.site_description,
+            posts => list.clone()
+        })
+        .unwrap();
     let _ = io::write_to_file("pub/feed.xml", &feed_xml);
 
     // 分类文章
@@ -256,8 +261,7 @@ impl<'de> Visitor<'de> for NaiveDateTimeVisitor {
         E: de::Error,
     {
         // 尝试解析字符串为 NaiveDateTime
-        NaiveDateTime::parse_from_str(value, "%Y-%m-%dT%H:%M:%S")
-            .map_err(E::custom)
+        NaiveDateTime::parse_from_str(value, "%Y-%m-%dT%H:%M:%S").map_err(E::custom)
     }
 }
 

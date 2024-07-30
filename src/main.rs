@@ -6,6 +6,7 @@ mod render;
 mod create;
 
 use clap::{arg, Parser, Subcommand};
+use create::create_new_site;
 use std::time::Instant; // counting // args
 
 #[derive(Parser)]
@@ -37,6 +38,8 @@ enum Commands {
     Rap,
     /// Deploy the static site to remote
     Deploy,
+    /// Init a new site
+    Init,
 }
 
 #[actix_web::main]
@@ -64,6 +67,10 @@ async fn main() {
         Some(Commands::Deploy) => {
             io::info("deploying to remote...");
             deploy::deploy();
+        }
+        Some(Commands::Init) => {
+            io::info("init new site at current directory...");
+            create::create_new_site();
         }
         Some(Commands::New { type_, name }) => {
             match type_.as_str() {

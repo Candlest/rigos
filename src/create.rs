@@ -1,8 +1,11 @@
-use std::{fs::create_dir_all, path::Path};
+use std::{fs::create_dir_all, path::Path, path::PathBuf, process::Command};
 
 use chrono::Local;
 
-use crate::{config, io};
+use crate::{
+    config,
+    io::{self, info},
+};
 
 pub fn create_new_page(name: String) {
     let _ = io::write_to_file(&format!("./{}.md", name), "# New Page");
@@ -14,7 +17,6 @@ pub fn create_new_page(name: String) {
 }
 
 pub fn create_new_post(opath: String) {
-
     let now = Local::now();
     let formatted = now.format("%Y-%m-%dT%H:%M:%S").to_string();
 
@@ -45,9 +47,37 @@ tags=[]
 category=\"{}\"
 %%%%%%
 ",
-        file_name, file_name, formatted ,parent_path
+        file_name, file_name, formatted, parent_path
     );
     let _ = create_dir_all(&format!("./posts/{}", parent_path));
     let _ = io::write_to_file(&format!("./posts/{}.md", opath), &contents);
     io::info("new post created");
+}
+
+pub fn create_new_site() {
+    let work_dir = PathBuf::from(".");
+    // 创建命令
+    let mut child = Command::new("git")
+        .current_dir(&work_dir)
+        .arg("clone") // 添加参数
+        .arg("https://github.com/Candlest/rigos-template.git")
+        .arg(".")
+        .spawn() // 启动子进程
+        .expect("failed to clone template");
+
+    // 等待命令执行完成
+    child.wait().expect("failed to clone template");
+
+    let work_dir = PathBuf::from("pub");
+    // 创建命令
+    let mut child = Command::new("git")
+        .current_dir(&work_dir)
+        .arg("init") // 添加参数
+        .spawn() // 启动子进程
+        .expect("failed to init repo");
+
+    let status = child.wait().expect("failed to init repo");
+
+    // 打印命令的退出状态
+    io::info(format!("Command finished with status: {}", status).as_str());
 }
