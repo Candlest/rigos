@@ -82,9 +82,9 @@ pub fn render() {
                         compile: CompileOptions {
                             allow_dangerous_html: true,
                             allow_dangerous_protocol: true,
-                            ..CompileOptions::default()
+                            ..CompileOptions::gfm()
                         },
-                        ..Options::default()
+                        ..Options::gfm()
                     },
                 )
                 .unwrap();

@@ -8,7 +8,11 @@ use crate::{
 };
 
 pub fn create_new_page(name: String) {
-    let _ = io::write_to_file(&format!("./{}.md", name), "# New Page");
+    let _ = io::write_to_file(&format!("./{}.md", name), "++++++
+title=\"标题\"
+filename=\"文件名\"
+++++++
+");
     // 注册
     let mut cfg = config::read_config("config.toml").unwrap();
     cfg.pages.push(name);
@@ -39,13 +43,13 @@ pub fn create_new_post(opath: String) {
     println!("File name: {}", file_name);
     println!("Parent path: {}", parent_path);
     let contents = format!(
-        "
+        "++++++
 title=\"{}\"
 filename=\"{}\"
 date=\"{}\"
 tags=[]
 category=\"{}\"
-%%%%%%
+++++++
 ",
         file_name, file_name, formatted, parent_path
     );
