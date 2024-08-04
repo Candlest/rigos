@@ -1,9 +1,9 @@
 mod config;
+mod create;
 mod deploy;
 mod io;
 mod local_server;
 mod render;
-mod create;
 
 use clap::{arg, Parser, Subcommand};
 use create::create_new_site;
@@ -23,6 +23,7 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     /// Create a new item with type and name
+    #[clap(visible_alias("n"))]
     New {
         #[arg(required = true, help = "The type of the new item (e.g., post, page)")]
         type_: String,
@@ -31,18 +32,37 @@ enum Commands {
         name: String,
     },
     /// Render html site from templates & sources
+    #[clap(visible_alias("r"))]
     Render,
     /// Preview the static site from localhost
-    Preview,
+    #[clap(visible_alias("p"))]
+    Preview {
+        #[arg(
+            short = 'w',
+            long = "watch",
+            help = "Enable watch mode to automatically refresh on changes"
+        )]
+        watch: bool,
+    },
     /// Render & preview
-    Rap,
+    #[clap(visible_alias("x"))]
+    Rap {
+        #[arg(
+            short = 'w',
+            long = "watch",
+            help = "Enable watch mode to automatically refresh on changes"
+        )]
+        watch: bool,
+    },
     /// Deploy the static site to remote
+    #[clap(visible_alias("d"))]
     Deploy,
     /// Init a new site
+    #[clap(visible_alias("i"))]
     Init,
 }
 
-#[actix_web::main]
+#[tokio::main]
 async fn main() {
     let start = Instant::now();
     // args
@@ -52,17 +72,17 @@ async fn main() {
             io::info("rendering...");
             render::render();
         }
-        Some(Commands::Preview) => {
+        Some(Commands::Preview{watch}) => {
             io::info("preview at http://localhost:8080");
             io::info("you can exit with CTRL + C");
-            let _ = local_server::preview().await;
+            let _ = local_server::preview(*watch).await;
         }
-        Some(Commands::Rap) => {
+        Some(Commands::Rap{watch}) => {
             io::info("rendering & previewing...");
             render::render();
             io::info("preview at http://localhost:8080");
             io::info("you can exit with CTRL + C");
-            let _ = local_server::preview().await;
+            let _ = local_server::preview(*watch).await;
         }
         Some(Commands::Deploy) => {
             io::info("deploying to remote...");
@@ -74,10 +94,8 @@ async fn main() {
         }
         Some(Commands::New { type_, name }) => {
             match type_.as_str() {
-                "post" => {
-                    create::create_new_post(name.to_string())
-                }
-                "page" =>{
+                "post" => create::create_new_post(name.to_string()),
+                "page" => {
                     create::create_new_page(name.to_string());
                 }
                 _ => {

@@ -4,14 +4,15 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-actix-files = "0.6.6"
-actix-web = "4.7.0"
-clap = {version="4.5.7",features = ["derive"]}
+clap = { version = "4.5.7", features = ["derive"] }
 colored = "2.1.0"
 markdown = "1.0.0-alpha.17"
-serde = {version="1.0.203",features = ["derive"]}
+serde = { version = "1.0.203", features = ["derive"] }
 serde_json = "1.0.117"
 toml = "0.8.14"
 walkdir = "2.5.0"
 minijinja = "2.0.2"
 chrono = { version = "0.4.38", features = ["serde"] }
+notify = "6.1.1"
+tokio = { version = "1.39.2", features = ["rt-multi-thread", "macros","sync", "time", "macros", "tracing"] }
+warp = "0.3.7"

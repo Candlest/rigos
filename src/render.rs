@@ -39,7 +39,7 @@ pub struct PostInfo {
     category: String,
 }
 
-pub fn render() {
+pub async fn render() {
     let cfg = config::read_config("config.toml").unwrap();
     let theme = cfg.theme;
 
