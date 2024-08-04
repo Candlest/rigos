@@ -9,6 +9,7 @@ pub struct Config {
     pub site_description: String,
     pub theme: String,
     pub pages: Vec<String>,
+    pub rss_page: Option<bool>
 }
 
 pub fn read_config(path: &str) -> Result<Config, Box<dyn std::error::Error>> {

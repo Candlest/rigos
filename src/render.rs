@@ -34,6 +34,7 @@ pub struct PostInfo {
     title: String,
     filename: String,
     date: NaiveDateTime,
+    latest: Option<NaiveDateTime>,
     tags: Vec<String>,
     category: String,
 }
@@ -104,8 +105,7 @@ pub fn render() {
                     .render(context! {
                         contents => markdown_content_html.clone(),
                         info => info.clone(),
-                    })
-                    .unwrap();
+                    }).unwrap();
 
                 // 写入 HTML 文件
                 let filename = info.filename.clone();
@@ -122,19 +122,22 @@ pub fn render() {
     // list 按时间排序
     list.sort_by(|a, b| b.info.date.cmp(&a.info.date));
 
-    // feed.xml
+    
     let template_feed = read_template_file(format!("theme/{}/feed.xml", theme).as_str()).unwrap();
-    env.add_template("feed", &template_feed).unwrap();
-    let template_feed = env.get_template("feed").unwrap();
-    let feed_xml = template_feed
-        .render(context! {
-            site_title => cfg.site_title,
-            site_link => cfg.site_link,
-            site_description => cfg.site_description,
-            posts => list.clone()
-        })
-        .unwrap();
-    let _ = io::write_to_file("pub/feed.xml", &feed_xml);
+    // feed.xml
+    if cfg.rss_page == Some(true) {
+        env.add_template("feed", &template_feed).unwrap();
+        let template_feed = env.get_template("feed").unwrap();
+        let feed_xml = template_feed
+            .render(context! {
+                site_title => cfg.site_title,
+                site_link => cfg.site_link,
+                site_description => cfg.site_description,
+                posts => list.clone()
+            })
+            .unwrap();
+        let _ = io::write_to_file("pub/feed.xml", &feed_xml);
+    }
 
     // 分类文章
     // 创建一个 HashMap 来按标签分类文章

@@ -18,8 +18,9 @@ Rigos 的缺点：
 
 - 目前缺乏灵活性，可定制性较差
 
-![demo1](./demo_classless_css.png)
-![demo2](./demo_png.png)
+![demo](./1.png)
+![demo](./2.png)
+![demo](./3.png)
 
 # 安装
 
