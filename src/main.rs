@@ -6,7 +6,6 @@ mod local_server;
 mod render;
 
 use clap::{arg, Parser, Subcommand};
-use create::create_new_site;
 use std::time::Instant; // counting // args
 
 #[derive(Parser)]
@@ -70,7 +69,7 @@ async fn main() {
     match &cli.command {
         Some(Commands::Render) => {
             io::info("rendering...");
-            render::render();
+            render::render().await;
         }
         Some(Commands::Preview{watch}) => {
             io::info("preview at http://localhost:8080");
@@ -79,7 +78,7 @@ async fn main() {
         }
         Some(Commands::Rap{watch}) => {
             io::info("rendering & previewing...");
-            render::render();
+            render::render().await;
             io::info("preview at http://localhost:8080");
             io::info("you can exit with CTRL + C");
             let _ = local_server::preview(*watch).await;

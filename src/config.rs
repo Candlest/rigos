@@ -22,7 +22,6 @@ pub fn read_config(path: &str) -> Result<Config, Box<dyn std::error::Error>> {
 pub fn write_config(path: &str, config: &Config) -> Result<(), Box<dyn std::error::Error>> {
     // 将 Config 结构体序列化为 TOML 格式的字符串
     let config_toml = toml::to_string(config)?;
-
     // 创建或覆盖文件，并获取可写对象
     let mut file = File::create(path)?;
 
