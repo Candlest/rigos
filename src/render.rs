@@ -43,8 +43,18 @@ pub async fn render() {
     let cfg = config::read_config("config.toml").unwrap();
     let theme = cfg.theme;
 
+    // make sure pub dir exists
+    let _ = create_dir_all("pub");
+
     // 复制静态文件
+    // css dir -> css
+    // js dir -> js
+    io::copy_dir_all(format!("theme/{}/js", theme), "pub/js".to_owned());
+    io::copy_dir_all(format!("theme/{}/css", theme), "pub/css".to_owned());
     io::copy_dir_all(format!("theme/{}/static", theme), "pub".to_owned());
+
+    // copy assets dir
+    io::copy_dir_all("assets".to_owned(), "pub/assets".to_owned());
 
     // 注册
     let mut env = Environment::new();
@@ -125,6 +135,7 @@ pub async fn render() {
     
     let template_feed = read_template_file(format!("theme/{}/feed.xml", theme).as_str()).unwrap();
     // feed.xml
+    // 如果配置文件中 rss_page 为 true，则生成 feed.xml
     if cfg.rss_page == Some(true) {
         env.add_template("feed", &template_feed).unwrap();
         let template_feed = env.get_template("feed").unwrap();
@@ -138,31 +149,6 @@ pub async fn render() {
             .unwrap();
         let _ = io::write_to_file("pub/feed.xml", &feed_xml);
     }
-
-    // 分类文章
-    // 创建一个 HashMap 来按标签分类文章
-    let mut tags_dict: HashMap<String, Vec<Post>> = HashMap::new();
-    // 遍历文章列表并按标签分类
-    for post in list.iter() {
-        for tag in &post.info.tags {
-            tags_dict
-                .entry(tag.clone())
-                .or_insert_with(Vec::new)
-                .push(post.clone());
-        }
-    }
-
-    // 创建一个 HashMap 来按分类分组文章
-    let mut categories_dict: HashMap<String, Vec<Post>> = HashMap::new();
-
-    // 遍历文章列表并按分类分组
-    for post in list.clone() {
-        categories_dict
-            .entry(post.info.category.clone())
-            .or_insert_with(Vec::new)
-            .push(post.clone());
-    }
-
     // 渲染 page
     let template_page = read_template_file(format!("theme/{}/page.html", theme).as_str()).unwrap();
     env.add_template("page", &template_page).unwrap();
@@ -203,8 +189,6 @@ pub async fn render() {
         }
     }
 
-    // TO DO: 渲染 feed.xml
-
     // 渲染 index.html
     let template_index =
         read_template_file(format!("theme/{}/index.html", theme).as_str()).unwrap();
@@ -223,19 +207,10 @@ pub async fn render() {
         },
     )
     .unwrap();
-    // let index_data = serde_json::json!(
-    //     {
-    //         "contents" : content,
-    //         "list" : list
-    //     }
-    // );
-    //println!("{}", serde_json::to_string_pretty(&index_data).unwrap().clone());
     let index_html = template_index
         .render(context! {
             contents => content,
             list => list,
-            categories_dict => categories_dict,
-            tags_dict => tags_dict
         })
         .unwrap();
     let _ = io::write_to_file("pub/index.html", &index_html);
