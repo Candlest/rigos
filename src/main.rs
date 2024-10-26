@@ -64,48 +64,64 @@ enum Commands {
 #[tokio::main]
 async fn main() {
     let start = Instant::now();
-    // args
     let cli = Cli::parse(); // get cli
-    match &cli.command {
-        Some(Commands::Render) => {
-            io::info("rendering...");
-            render::render().await;
-        }
-        Some(Commands::Preview{watch}) => {
-            io::info("preview at http://localhost:8080");
-            io::info("you can exit with CTRL + C");
-            let _ = local_server::preview(*watch).await;
-        }
-        Some(Commands::Rap{watch}) => {
-            io::info("rendering & previewing...");
-            render::render().await;
-            io::info("preview at http://localhost:8080");
-            io::info("you can exit with CTRL + C");
-            let _ = local_server::preview(*watch).await;
-        }
-        Some(Commands::Deploy) => {
-            io::info("deploying to remote...");
-            deploy::deploy();
-        }
-        Some(Commands::Init) => {
-            io::info("init new site at current directory...");
-            create::create_new_site();
-        }
-        Some(Commands::New { type_, name }) => {
-            match type_.as_str() {
-                "post" => create::create_new_post(name.to_string()),
-                "page" => {
-                    create::create_new_page(name.to_string());
-                }
-                _ => {
-                    // 处理所有未明确匹配的情况
-                    io::errstr("Error: Unsupported type");
-                }
-            }
-        }
-        None => io::info("please input subcommand or use `rigos help` to get more information..."),
+
+    if let Some(command) = &cli.command {
+        handle_command(command).await;
+    } else {
+        io::info("please input subcommand or use `rigos help` to get more information...");
     }
 
     let duration = start.elapsed();
     io::info(&format!("Exit, with {} seconds", duration.as_secs_f32()));
+}
+
+async fn handle_command(command: &Commands) {
+    match command {
+        Commands::Render => handle_render().await,
+        Commands::Preview { watch } => handle_preview(*watch).await,
+        Commands::Rap { watch } => handle_rap(*watch).await,
+        Commands::Deploy => handle_deploy(),
+        Commands::Init => handle_init(),
+        Commands::New { type_, name } => handle_new(type_, name),
+    }
+}
+
+async fn handle_render() {
+    io::info("rendering...");
+    render::render().await;
+}
+
+async fn handle_preview(watch: bool) {
+    io::info("preview at http://localhost:8080");
+    io::info("you can exit with CTRL + C");
+    let _ = local_server::preview(watch).await;
+}
+
+async fn handle_rap(watch: bool) {
+    io::info("rendering & previewing...");
+    render::render().await;
+    io::info("preview at http://localhost:8080");
+    io::info("you can exit with CTRL + C");
+    let _ = local_server::preview(watch).await;
+}
+
+fn handle_deploy() {
+    io::info("deploying to remote...");
+    deploy::deploy();
+}
+
+fn handle_init() {
+    io::info("init new site at current directory...");
+    create::create_new_site();
+}
+
+fn handle_new(type_: &str, name: &str) {
+    match type_ {
+        "post" => create::create_new_post(name.to_string()),
+        "page" => create::create_new_page(name.to_string()),
+        _ => {
+            io::errstr("Error: Unsupported type");
+        }
+    }
 }

@@ -23,3 +23,4 @@ tokio = { version = "1.39.2", features = [
     "tracing",
 ] }
 warp = "0.3.7"
+serde_yml = "0.0.12"

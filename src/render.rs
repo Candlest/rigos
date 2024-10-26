@@ -5,7 +5,6 @@ use markdown::{self, CompileOptions, Options};
 use minijinja::{context, Environment};
 use serde::de::{self, Visitor};
 use serde::{Deserialize, Deserializer, Serialize};
-use std::collections::HashMap;
 use std::fs::create_dir_all;
 use std::io::Read;
 use std::path::{Path, PathBuf};
@@ -13,156 +12,72 @@ use std::{fmt, fs};
 use toml;
 
 #[derive(Deserialize, Serialize, Clone)]
-pub struct Page {
-    info: PageInfo,
-    contents: String,
-}
-#[derive(Deserialize, Serialize, Clone)]
-pub struct PageInfo {
+pub struct Article {
     title: String,
-    filename: String,
-}
-
-#[derive(Serialize, Clone)]
-pub struct Post {
-    info: PostInfo,
-    contents: String,
-}
-
-#[derive(Deserialize, Serialize, Clone)]
-pub struct PostInfo {
-    title: String,
-    filename: String,
+    html_name: String,
     date: NaiveDateTime,
     latest: Option<NaiveDateTime>,
+    published: Option<bool>,
     tags: Vec<String>,
     category: String,
+    content: Option<String>,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct Page {
+    title: String,
+    html_name: String,
+    content: Option<String>,
 }
 
 pub async fn render() {
     let cfg = config::read_config("config.toml").unwrap();
-    let theme = cfg.theme;
+    let theme = cfg.theme.clone();
 
-    // make sure pub dir exists
+    create_directories(); // create directories
+    copy_static_files(&theme); // copy static files
+    let mut env = Environment::new();
+    let template_base = read_template_file(&format!("theme/{}/base.html", theme)).unwrap();
+    env.add_template("base", template_base.as_str()).unwrap();
+    let template_page = read_template_file(&format!("theme/{}/page.html", theme)).unwrap();
+    env.add_template("page", template_page.as_str()).unwrap();
+    let template_post = read_template_file(&format!("theme/{}/post.html", theme)).unwrap();
+    env.add_template("post", template_post.as_str()).unwrap();
+    let template_json = read_template_file(&format!("theme/{}/posts.json", theme)).unwrap();
+    env.add_template("json", template_json.as_str()).unwrap();
+
+    // deal with posts
+    process_posts(&mut env);
+    // generate_feed(&mut env, &cfg, &posts);
+    render_pages(&mut env, &cfg, &theme);
+}
+
+fn create_directories() {
     let _ = create_dir_all("pub");
+    let _ = create_dir_all("pub/post");
+}
 
-    // 复制静态文件
-    // css dir -> css
-    // js dir -> js
+fn copy_static_files(theme: &str) {
     io::copy_dir_all(format!("theme/{}/js", theme), "pub/js".to_owned());
     io::copy_dir_all(format!("theme/{}/css", theme), "pub/css".to_owned());
     io::copy_dir_all(format!("theme/{}/static", theme), "pub".to_owned());
-
-    // copy assets dir
     io::copy_dir_all("assets".to_owned(), "pub/assets".to_owned());
+}
 
-    // 注册
-    let mut env = Environment::new();
-
-    // 添加base.html
-    let template_base = read_template_file(format!("theme/{}/base.html", theme).as_str()).unwrap();
-    env.add_template("base", &template_base).unwrap();
-
-    // 渲染文章
-
-    // 确保文件夹存在
-    let _ = create_dir_all("pub/post");
-
-    let template_post = read_template_file(format!("theme/{}/post.html", theme).as_str()).unwrap();
-    env.add_template("post", &template_post).unwrap();
-    let template_post = env.get_template("post").unwrap();
-    // let mut list: Vec<Post> = Vec::new();
-    let list: Vec<Post> = Vec::new();
+fn process_posts(env: &mut Environment){
     let posts_dir = Path::new("posts");
-    let mut list: Vec<Post> = Vec::new();
-    let posts = read_posts_recursively(posts_dir);
+    let mut list: Vec<Article> = Vec::new();
+    let posts = read_posts_recursively(posts_dir); // read all posts recursively
+
     for post_path in posts {
-        if post_path.is_file() {
-            // 读取文件内容
-            let content = fs::read_to_string(&post_path).unwrap();
+        let content = fs::read_to_string(&post_path).unwrap();
+        let parts: Vec<&str> = content.splitn(3, "---").collect();
 
-            // 按 ++++++ 分割内容
-            let parts: Vec<&str> = content.split("++++++").collect();
-
-            if parts.len() == 3 {
-                let toml_content = parts[1].trim();
-                let markdown_content = parts[2].trim();
-                let markdown_content_html = markdown::to_html_with_options(
-                    &markdown_content,
-                    &Options {
-                        compile: CompileOptions {
-                            allow_dangerous_html: true,
-                            allow_dangerous_protocol: true,
-                            ..CompileOptions::gfm()
-                        },
-                        ..Options::gfm()
-                    },
-                )
-                .unwrap();
-
-                // 从 TOML 元数据解析 PostInfo
-                let info: PostInfo = read_toml_to_config(toml_content).unwrap();
-
-                // 创建 Post 对象
-                let post_obj = Post {
-                    info: info.clone(),
-                    contents: markdown_content_html.clone(),
-                };
-                list.push(post_obj);
-
-                // 使用模板渲染 HTML
-                let post_html = template_post
-                    .render(context! {
-                        contents => markdown_content_html.clone(),
-                        info => info.clone(),
-                    }).unwrap();
-
-                // 写入 HTML 文件
-                let filename = info.filename.clone();
-                let _ = io::write_to_file(&format!("pub/post/{}.html", filename), &post_html);
-            } else {
-                eprintln!(
-                    "File does not contain right '++++++' separator: {:?}",
-                    post_path
-                );
-            }
-        }
-    }
-
-    // list 按时间排序
-    list.sort_by(|a, b| b.info.date.cmp(&a.info.date));
-
-    
-    let template_feed = read_template_file(format!("theme/{}/feed.xml", theme).as_str()).unwrap();
-    // feed.xml
-    // 如果配置文件中 rss_page 为 true，则生成 feed.xml
-    if cfg.rss_page == Some(true) {
-        env.add_template("feed", &template_feed).unwrap();
-        let template_feed = env.get_template("feed").unwrap();
-        let feed_xml = template_feed
-            .render(context! {
-                site_title => cfg.site_title,
-                site_link => cfg.site_link,
-                site_description => cfg.site_description,
-                posts => list.clone()
-            })
-            .unwrap();
-        let _ = io::write_to_file("pub/feed.xml", &feed_xml);
-    }
-    // 渲染 page
-    let template_page = read_template_file(format!("theme/{}/page.html", theme).as_str()).unwrap();
-    env.add_template("page", &template_page).unwrap();
-    let template_page = env.get_template("page").unwrap();
-    for page in cfg.pages {
-        let content = io::read_file_contents(&format!("{}.md", page))
-            .unwrap()
-            .to_string();
-        let parts: Vec<&str> = content.split("++++++").collect();
         if parts.len() == 3 {
-            let toml_content = parts[1].trim().to_string();
-            let markdown_content = parts[2].trim().to_string();
-            let markdown_content = markdown::to_html_with_options(
-                &markdown_content.as_str(),
+            let frontmatter = parts[1]; // frontmatter
+            let markdown_content = parts[2];
+            let html_content = markdown::to_html_with_options(
+                &markdown_content,
                 &Options {
                     compile: CompileOptions {
                         allow_dangerous_html: true,
@@ -174,46 +89,89 @@ pub async fn render() {
             )
             .unwrap();
 
-            // 保存
-            let info = toml::from_str::<PageInfo>(&toml_content).unwrap();
-            // 输出
-            let page_html = template_page
+            let mut _article: Article = serde_yml::from_str(frontmatter).unwrap();
+            _article.content = Some(html_content.clone());
+            let html_name = _article.html_name.clone();
+
+            let post_html = env
+                .get_template("post")
+                .unwrap()
                 .render(context! {
-                    contents => markdown_content,
-                    info => info,
+                    article => _article.clone(),
                 })
                 .unwrap();
-            let _ = io::write_to_file(&format!("pub/{}.html", info.filename), &page_html);
+            // save to file and list
+            list.push(_article);
+            let _ = io::write_to_file(&format!("pub/post/{}.html", html_name), &post_html);
         } else {
-            eprintln!("File does not contain right '++++++' separator: {:?}", page);
+            eprintln!(
+                "File does not contain avaliable frontmatter: {:?}",
+                post_path
+            );
         }
     }
 
-    // 渲染 index.html
-    let template_index =
-        read_template_file(format!("theme/{}/index.html", theme).as_str()).unwrap();
-    env.add_template("page", &template_index).unwrap();
-    let template_index = env.get_template("page").unwrap();
-    let content = io::read_file_contents("index.md").unwrap().to_string();
-    let content = markdown::to_html_with_options(
-        &content.as_str(),
-        &Options {
-            compile: CompileOptions {
-                allow_dangerous_html: true,
-                allow_dangerous_protocol: true,
-                ..CompileOptions::gfm()
-            },
-            ..Options::gfm()
-        },
-    )
-    .unwrap();
-    let index_html = template_index
+    list.sort_by(|a, b| b.date.cmp(&a.date));
+    let post_json_content = env.get_template("json").unwrap()
         .render(context! {
-            contents => content,
-            list => list,
+            post_list => list,
         })
         .unwrap();
-    let _ = io::write_to_file("pub/index.html", &index_html);
+    // save to posts.json
+    let _ = io::write_to_file("pub/posts.json", &post_json_content);
+}
+
+// fn generate_feed(env: &mut Environment, cfg: &config::Config, posts: &[Article]) {
+//     if cfg.rss_page == Some(true) {
+//         let template_feed = read_template_file(&format!("theme/{}/feed.xml", cfg.theme)).unwrap();
+//         env.add_template("feed", template_feed).unwrap();
+//         let template_feed = env.get_template("feed").unwrap();
+//         let feed_xml = template_feed
+//             .render(context! {
+//                 site_title => cfg.site_title,
+//                 site_link => cfg.site_link,
+//                 site_description => cfg.site_description,
+//                 posts => posts.to_vec()
+//             })
+//             .unwrap();
+//         let _ = io::write_to_file("pub/feed.xml", &feed_xml);
+//     }
+// }
+
+fn render_pages(env: &mut Environment, cfg: &config::Config, theme: &str) {
+    for page in &cfg.pages {
+        let content = io::read_file_contents(&format!("{}.md", page))
+            .unwrap()
+            .to_string();
+        let parts: Vec<&str> = content.splitn(3, "---").collect();
+        if parts.len() == 3 {
+            let frontmatter = parts[1];
+            let markdown_content = parts[2];
+            let html_content = markdown::to_html_with_options(
+                &markdown_content,
+                &Options {
+                    compile: CompileOptions {
+                        allow_dangerous_html: true,
+                        allow_dangerous_protocol: true,
+                        ..CompileOptions::gfm()
+                    },
+                    ..Options::gfm()
+                },
+            )
+            .unwrap();
+
+            let mut page: Page = serde_yml::from_str(&frontmatter).unwrap();
+            page.content = Some(html_content.clone());
+            let page_html = env.get_template("page").unwrap()
+                .render(context! {
+                    page => page.clone(),
+                })
+                .unwrap();
+            let _ = io::write_to_file(&format!("pub/{}.html", page.html_name), &page_html);
+        } else {
+            eprintln!("File does not contain right '---' separator: {:?}", page);
+        }
+    }
 }
 
 fn read_template_file(path: &str) -> Result<String, std::io::Error> {
@@ -223,39 +181,6 @@ fn read_template_file(path: &str) -> Result<String, std::io::Error> {
     Ok(contents)
 }
 
-// 自定义 Deserializer 来解析 TOML 中的日期时间字符串
-
-struct NaiveDateTimeVisitor;
-
-impl<'de> Visitor<'de> for NaiveDateTimeVisitor {
-    type Value = NaiveDateTime;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("a date and time in ISO 8601 format")
-    }
-
-    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        // 尝试解析字符串为 NaiveDateTime
-        NaiveDateTime::parse_from_str(value, "%Y-%m-%dT%H:%M:%S").map_err(E::custom)
-    }
-}
-
-fn deserialize_naive_date_time<'de, D>(deserializer: D) -> Result<NaiveDateTime, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    deserializer.deserialize_str(NaiveDateTimeVisitor)
-}
-
-// 然后，在反序列化过程中使用 deserialize_naive_date_time 函数
-fn read_toml_to_config(toml_str: &str) -> Result<PostInfo, toml::de::Error> {
-    let article: PostInfo = toml::from_str(toml_str)?;
-    Ok(article)
-}
-
 fn read_posts_recursively(dir: &Path) -> Vec<PathBuf> {
     let mut posts = Vec::new();
     if dir.is_dir() {
@@ -263,10 +188,8 @@ fn read_posts_recursively(dir: &Path) -> Vec<PathBuf> {
         for entry in entries.flatten() {
             let path = entry.path();
             if path.is_dir() {
-                // 如果是目录，递归调用
                 posts.append(&mut read_posts_recursively(&path));
-            } else if path.is_file() {
-                // 如果是文件，添加到列表
+            } else if path.is_file() && path.extension().unwrap() == "md" {
                 posts.push(path);
             }
         }
