@@ -17,6 +17,20 @@ pub(crate) async fn preview(watch: bool) {
     info("Watching for changes...");
 
     let (tx, rx) = std::sync::mpsc::channel();
+    /// Initializes a file system watcher using the `notify` crate to monitor file changes.
+    /// 
+    /// The watcher is configured to ignore modifications in the `/pub/` directory. When a 
+    /// relevant file modification event is detected, it sends the event through a channel 
+    /// for further processing in another task.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `tx` - A channel sender to transmit file modification events.
+    /// 
+    /// # Errors
+    /// 
+    /// If the watcher fails to initialize, it will panic with "watcher error".
+    /// If sending an event through the channel fails, an error message will be printed to stderr.
     let mut watcher = notify::recommended_watcher(move |res: Result<Event, Error>| {
         if let Ok(event) = res {
             match event.kind {

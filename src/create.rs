@@ -8,11 +8,7 @@ use crate::{
 };
 
 pub fn create_new_page(name: String) {
-    let _ = io::write_to_file(&format!("./{}.md", name), "++++++
-title=\"标题\"
-filename=\"文件名\"
-++++++
-");
+    let _ = io::write_to_file(Path::new(&format!("./{}.md", name)), include_str!("templates/page.md"));
     // 注册
     let mut cfg = config::read_config("config.toml").unwrap();
     cfg.pages.push(name);
@@ -42,19 +38,13 @@ pub fn create_new_post(opath: String) {
 
     println!("File name: {}", file_name);
     println!("Parent path: {}", parent_path);
-    let contents = format!(
-        "++++++
-title=\"{}\"
-filename=\"{}\"
-date=\"{}\"
-tags=[]
-category=\"{}\"
-++++++
-",
-        file_name, file_name, formatted, parent_path
-    );
+    let raw_content = include_str!("templates/post.md");
+    let contents = raw_content
+        .replace("{file_name}", file_name)
+        .replace("{formatted}", &formatted)
+        .replace("{parent_path}", parent_path);
     let _ = create_dir_all(&format!("./posts/{}", parent_path));
-    let _ = io::write_to_file(&format!("./posts/{}.md", opath), &contents);
+    let _ = io::write_to_file(Path::new(&format!("./posts/{}.md", opath)), &contents);
     io::info("new post created");
 }
 

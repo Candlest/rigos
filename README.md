@@ -26,7 +26,7 @@ Disadvantages of Rigos:
 
 # TODO
 
-- [] YAML Front Matter
+- [x] YAML Front Matter
 
 # Installation
 
