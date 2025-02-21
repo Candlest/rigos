@@ -20,6 +20,8 @@ Disadvantages of Rigos:
 
 - Currently lacks flexibility, with poor customizability
 
+![](README/chart.png)
+
 ![demo](README/1.png)
 ![demo](README/2.png)
 ![demo](README/3.png)
