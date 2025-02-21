@@ -1,9 +1,27 @@
-mod config;
-mod create;
-mod deploy;
-mod io;
-mod local_server;
+mod conf;
 mod render;
+mod deploy;
+
+use std::path::PathBuf;
+
+use anyhow::{self, Context};
+use colored::Colorize;
+use log::{self, info};
+use once_cell::sync::Lazy;
+mod local_server;
+static PATH: Lazy<PathBuf> =
+    Lazy::new(|| std::env::current_dir().expect("Failed to get current directory"));
+static PAGE_PATH: Lazy<PathBuf> = Lazy::new(|| PATH.join("pages"));
+static POST_PATH: Lazy<PathBuf> = Lazy::new(|| PATH.join("posts"));
+static THEME_PATH: Lazy<PathBuf> = Lazy::new(|| PATH.join("themes"));
+static PUBLIC_PATH: Lazy<PathBuf> = Lazy::new(|| PATH.join("public"));
+static CONFIG: Lazy<conf::RigosConfig> = Lazy::new(|| {
+    let path = PATH.join("config.toml");
+    let config = std::fs::read_to_string(&path)
+        .with_context(|| format!("Failed to read config file: {:?}", path))
+        .expect("Failed to read config file");
+    toml::from_str(&config).expect("Failed to parse config file")
+});
 
 use clap::{arg, Parser, Subcommand};
 use std::time::Instant; // counting // args
@@ -21,15 +39,6 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Create a new item with type and name
-    #[clap(visible_alias("n"))]
-    New {
-        #[arg(required = true, help = "The type of the new item (e.g., post, page)")]
-        type_: String,
-
-        #[arg(required = true, help = "The name of the new item")]
-        name: String,
-    },
     /// Render html site from templates & sources
     #[clap(visible_alias("r"))]
     Render,
@@ -63,17 +72,25 @@ enum Commands {
 
 #[tokio::main]
 async fn main() {
+    env_logger::init();
+    log::set_max_level(log::LevelFilter::Info);
     let start = Instant::now();
     let cli = Cli::parse(); // get cli
 
     if let Some(command) = &cli.command {
         handle_command(command).await;
     } else {
-        io::info("please input subcommand or use `rigos help` to get more information...");
+        println!(
+            "please input subcommand or use {} to get more information...",
+            "rigos help".bold().blue()
+        );
     }
 
     let duration = start.elapsed();
-    io::info(&format!("Exit, with {} seconds", duration.as_secs_f32()));
+    println!(
+        "Exit, with {} seconds",
+        duration.as_secs_f32().to_string().bold().blue()
+    );
 }
 
 async fn handle_command(command: &Commands) {
@@ -83,45 +100,34 @@ async fn handle_command(command: &Commands) {
         Commands::Rap { watch } => handle_rap(*watch).await,
         Commands::Deploy => handle_deploy(),
         Commands::Init => handle_init(),
-        Commands::New { type_, name } => handle_new(type_, name),
     }
 }
 
 async fn handle_render() {
-    io::info("rendering...");
-    render::render().await;
+    println!("rendering...");
+    render::render_all();
 }
 
 async fn handle_preview(watch: bool) {
-    io::info("preview at http://localhost:8080");
-    io::info("you can exit with CTRL + C");
+    println!("preview at {}", "http://localhost:8080".bold().blue());
+    println!("you can exit with {}", "CTRL + C".bold().blue());
     let _ = local_server::preview(watch).await;
 }
 
 async fn handle_rap(watch: bool) {
-    io::info("rendering & previewing...");
-    render::render().await;
-    io::info("preview at http://localhost:8080");
-    io::info("you can exit with CTRL + C");
+    println!("rendering & previewing...");
+    handle_render().await;
+    println!("preview at {}", "http://localhost:8080".bold().blue());
+    println!("you can exit with {}", "CTRL + C".bold().blue());
     let _ = local_server::preview(watch).await;
 }
 
 fn handle_deploy() {
-    io::info("deploying to remote...");
+    println!("deploying to remote...");
     deploy::deploy();
 }
 
 fn handle_init() {
-    io::info("init new site at current directory...");
-    create::create_new_site();
-}
-
-fn handle_new(type_: &str, name: &str) {
-    match type_ {
-        "post" => create::create_new_post(name.to_string()),
-        "page" => create::create_new_page(name.to_string()),
-        _ => {
-            io::errstr("Error: Unsupported type");
-        }
-    }
+    println!("init new site at current directory...");
+    //create::create_new_site();
 }

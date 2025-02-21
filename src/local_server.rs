@@ -1,53 +1,42 @@
+use crate::{render, PUBLIC_PATH};
+use log::{error, info};
 use notify::{Error, Event, RecursiveMode, Watcher};
 use std::path::Path;
 use tokio::task;
 use warp::Filter;
-use crate::{io::info, render};
 
 pub(crate) async fn preview(watch: bool) {
+    let path = PUBLIC_PATH.to_str().unwrap();
     if !watch {
         // 如果不需要监视文件变动，仅启动服务器
-        let files = warp::fs::dir("pub");
+        let files = warp::fs::dir(path);
         let app = warp::get().and(files);
         let server = warp::serve(app).run(([127, 0, 0, 1], 8080));
         let _ = server.await;
         return;
     }
 
-    info("Watching for changes...");
+    println!("watchdog is running...");
 
     let (tx, rx) = std::sync::mpsc::channel();
-    /// Initializes a file system watcher using the `notify` crate to monitor file changes.
-    /// 
-    /// The watcher is configured to ignore modifications in the `/pub/` directory. When a 
-    /// relevant file modification event is detected, it sends the event through a channel 
-    /// for further processing in another task.
-    /// 
-    /// # Arguments
-    /// 
-    /// * `tx` - A channel sender to transmit file modification events.
-    /// 
-    /// # Errors
-    /// 
-    /// If the watcher fails to initialize, it will panic with "watcher error".
-    /// If sending an event through the channel fails, an error message will be printed to stderr.
     let mut watcher = notify::recommended_watcher(move |res: Result<Event, Error>| {
         if let Ok(event) = res {
             match event.kind {
-                // 检查是否为除 pub 文件夹以外的文件修改事件
                 notify::EventKind::Modify(_)
-                    if !event.paths.iter().any(|p| p.to_string_lossy().contains("/pub/")) =>
+                    if !event
+                        .paths
+                        .iter()
+                        .any(|p| p.to_string_lossy().contains(path)) =>
                 {
-                    // 发送事件到通道，以便在另一个任务中处理
                     if tx.send(event.clone()).is_err() {
-                        eprintln!("Error sending event through channel");
+                        error!("Error sending event through channel");
                     }
                 }
                 _ => {}
             }
-            //println!("event: {:?}", event);
+            info!("event: {:?}", event);
         } else {
-            //println!("watch error: {:?}", res.err().unwrap());
+            error!("watch error: {:?}", res.err().unwrap());
         }
     })
     .expect("watcher error");
@@ -55,23 +44,21 @@ pub(crate) async fn preview(watch: bool) {
     watcher
         .watch(Path::new("."), RecursiveMode::Recursive)
         .expect("watch error");
-
-    // 启动 warp 服务器
-    let files = warp::fs::dir("pub");
+    let files = warp::fs::dir(path);
     let app = warp::get().and(files);
     let server_future = warp::serve(app).run(([127, 0, 0, 1], 8080));
-
-    // 异步任务用于处理文件变动
     let render_task = task::spawn(async move {
         while let Ok(event) = rx.recv() {
-            // 这里我们只处理非 pub 文件夹的事件
-            if !event.paths.iter().any(|p| p.to_string_lossy().contains("/pub/")) {
-                task::spawn(render::render());
-                //info("Updated");
+            if !event
+                .paths
+                .iter()
+                .any(|p| p.to_string_lossy().contains(path))
+            {
+                task::spawn(async {
+                    render::render_all();
+                });
             }
         }
     });
-
-    // 运行服务器和文件监视任务
     let _ = tokio::join!(server_future, render_task);
 }

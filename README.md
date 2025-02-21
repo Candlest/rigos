@@ -24,9 +24,15 @@ Disadvantages of Rigos:
 ![demo](README/2.png)
 ![demo](README/3.png)
 
+
+
+> [!WARNING]
+> rigos is still in early development.
+
 # TODO
 
-- [x] YAML Front Matter
+- [] Command of init sites, posts and pages
+- [] A doc with guidebook ,themes list and others
 
 # Installation
 
@@ -44,8 +50,6 @@ For Windows systems, you can directly copy `target/release/rigos.exe` to `C:\Win
 
 # Usage
 
-You can use `rigos init` to create a new site.
-
 You can get the help list through `rigos help`.
 
 Render the `/pub` directory: `rigos render`
@@ -54,13 +58,7 @@ Preview from the `/pub` directory: `rigos preview`
 
 Lazy command: `rigos rap`
 
-> If you have used `hugo` before, `rigos` is easy to get started with, because the `rigos` command is inspired by `hugo`.
-
-Deploy to remote git repo: `rigos deploy`
-
-You can use `rigos new page "apage"` to create a new page (and you should register it to `config.toml`, so that minijinja can read it)
-
-You can use `rigos new post "category/post"` to create a new post.
+Deploy to remote git repo: `rigos deploy`, and choose `public` directory as the root of the site.
 
 # Related
 
