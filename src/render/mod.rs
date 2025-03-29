@@ -1,12 +1,11 @@
 use std::{
-    fs::{self, read_dir},
+    fs::{self},
     io::Read,
     path::Path,
 };
 
-use crate::{CONFIG, PAGE_PATH, POST_PATH};
+use crate::{ASSETS_PATH, CONFIG, PAGE_PATH, POST_PATH};
 use anyhow::Context;
-use clap::builder::Str;
 use entities::{Page, Post};
 use log::info;
 use minijinja::{self, Environment};
@@ -19,6 +18,15 @@ use markdown::{to_html_with_options, CompileOptions, Options};
 pub fn render_all() {
     let pages = build_pages();
     let posts = build_posts();
+
+    copy_dir_all(&*ASSETS_PATH, Path::new("public/assets"))
+        .with_context(|| {
+            format!(
+                "Failed to copy assets from {:?} to {:?}",
+                ASSETS_PATH, "public/assets"
+            )
+        })
+        .unwrap();
 
     // theme
     let static_dir = format!("theme/{}/static", CONFIG.theme);

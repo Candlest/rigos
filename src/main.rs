@@ -13,8 +13,8 @@ static PATH: Lazy<PathBuf> =
     Lazy::new(|| std::env::current_dir().expect("Failed to get current directory"));
 static PAGE_PATH: Lazy<PathBuf> = Lazy::new(|| PATH.join("pages"));
 static POST_PATH: Lazy<PathBuf> = Lazy::new(|| PATH.join("posts"));
-static THEME_PATH: Lazy<PathBuf> = Lazy::new(|| PATH.join("themes"));
 static PUBLIC_PATH: Lazy<PathBuf> = Lazy::new(|| PATH.join("public"));
+static ASSETS_PATH: Lazy<PathBuf> = Lazy::new(|| PATH.join("assets"));
 static CONFIG: Lazy<conf::RigosConfig> = Lazy::new(|| {
     let path = PATH.join("config.toml");
     let config = std::fs::read_to_string(&path)

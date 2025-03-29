@@ -1,6 +1,15 @@
 use crate::PATH;
 use std::process::Command;
 pub fn deploy() {
+    // read input
+    let mut input = String::new();
+    println!("Please enter the commit message:");
+    std::io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
+    let commit_message = input.trim();
+    println!("Commit message: {}", commit_message);
+
     let mut child = Command::new("git")
         .current_dir(PATH.clone())
         .arg("add") // 添加参数
