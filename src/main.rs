@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 use anyhow::{self, Context};
 use colored::Colorize;
-use log::{self, info};
+use log::{self};
 use once_cell::sync::Lazy;
 mod local_server;
 static PATH: Lazy<PathBuf> =

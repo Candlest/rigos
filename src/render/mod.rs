@@ -54,7 +54,11 @@ pub fn render_all() {
     let template_index = read_template_file(&format!("{}/index.html", templates_dir)).unwrap();
     env.add_template("index.html", template_index.as_str())
         .unwrap();
+    let template_index = read_template_file(&format!("{}/archive.html", templates_dir)).unwrap();
+    env.add_template("archive.html", template_index.as_str())
+        .unwrap();
     process::process_posts_and_index(&mut env, &posts);
+    process::process_archive(&mut env, &posts);
     process::process_pages(&mut env, &pages);
 }
 
@@ -160,7 +164,6 @@ fn split_content(s: &str) -> (&str, &str) {
     (frontmatter, markdown_content)
 }
 
-use pulldown_cmark::{html, Options as CmarkOptions, Parser};
 
 fn markdown_to_html(markdown_input: &str) -> String {
     to_html_with_options(markdown_input, &Options {

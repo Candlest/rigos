@@ -10,6 +10,7 @@ pub struct Post {
     pub published: Option<bool>,
     pub tags: Vec<String>,
     pub category: String,
+    pub description: Option<String>,
     pub content: Option<String>,
 }
 
