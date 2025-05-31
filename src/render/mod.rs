@@ -111,7 +111,7 @@ pub fn build_pages() -> Vec<Page> {
                         .to_str()
                         .expect("File name must be valid UTF-8")
                         .replace(".html", "");
-                    let mut page = Page {
+                    let page = Page {
                         title: file_name.clone(),
                         filename: file_name,
                         content: Some(html_content),

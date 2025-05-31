@@ -1,11 +1,9 @@
-use std::{fs::File, io::Write, path::Path};
+use std::path::Path;
 
-use anyhow::Context;
-use chrono::Datelike;
 use log::info;
 use minijinja::{self, context, Environment};
 
-use super::entities::{self, Page};
+use super::entities::Page;
 
 pub fn process_pages(env: &mut Environment, pages: &Vec<Page>) {
     info!("process pages...");

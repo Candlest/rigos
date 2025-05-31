@@ -1,11 +1,10 @@
-use std::{fs::File, io::Write, path::Path};
+use std::path::Path;
 
 use anyhow::Context;
-use chrono::Datelike;
 use log::info;
 use minijinja::{self, context, Environment};
 
-use super::entities::{self, Post};
+use super::entities::Post;
 
 // 删除常量 POSTS_PER_PAGE，因为不再需要分页
 
@@ -56,7 +55,7 @@ pub fn process_index(env: &mut Environment, posts: &Vec<Post>) {
         *category_cloud.entry(post.category.clone()).or_insert(0) += 1;
     }
 
-    let mut ctx = minijinja::context! {
+    let ctx = minijinja::context! {
         posts => posts,
         tag_cloud => tag_cloud,
         category_cloud => category_cloud,

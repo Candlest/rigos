@@ -1,10 +1,10 @@
-use std::{fs::File, io::Write, path::Path};
+use std::path::Path;
 
 use anyhow::Context;
 use log::info;
 use minijinja::{self, context, Environment};
 
-use super::entities::{self, Post};
+use super::entities::Post;
 use std::collections::HashMap;
 
 pub fn process_tags(env: &mut Environment, posts: &Vec<Post>) {
