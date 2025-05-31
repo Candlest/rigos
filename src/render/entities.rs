@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Post {
     pub title: String,
     pub filename: String,
@@ -14,9 +14,10 @@ pub struct Post {
     pub content: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Page {
     pub title: String,
     pub filename: String,
     pub content: Option<String>,
+    pub is_html: Option<bool>,
 }

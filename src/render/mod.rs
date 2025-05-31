@@ -12,7 +12,12 @@ use minijinja::{self, Environment};
 use serde_yml;
 use walkdir::WalkDir;
 mod entities;
-mod process;
+mod file_writer;
+mod process_archive;
+mod process_categories;
+mod process_pages;
+mod process_posts;
+mod process_tags; // 新增 // 新增
 use markdown::{to_html_with_options, CompileOptions, Options};
 
 pub fn render_all() {
@@ -48,6 +53,8 @@ pub fn render_all() {
     let template_page = read_template_file(&format!("{}/page.html", templates_dir)).unwrap();
     env.add_template("page.html", template_page.as_str())
         .unwrap();
+    let template_post = read_template_file(&format!("{}/page_pure.html", templates_dir)).unwrap();
+    env.add_template("page_pure.html", template_post.as_str()).unwrap();
     let template_post = read_template_file(&format!("{}/post.html", templates_dir)).unwrap();
     env.add_template("post.html", template_post.as_str())
         .unwrap();
@@ -57,9 +64,21 @@ pub fn render_all() {
     let template_index = read_template_file(&format!("{}/archive.html", templates_dir)).unwrap();
     env.add_template("archive.html", template_index.as_str())
         .unwrap();
-    process::process_posts_and_index(&mut env, &posts);
-    process::process_archive(&mut env, &posts);
-    process::process_pages(&mut env, &pages);
+    let template_index = read_template_file(&format!("{}/tag.html", templates_dir)).unwrap();
+    env.add_template("tag.html", template_index.as_str())
+        .unwrap();
+    let template_index = read_template_file(&format!("{}/category.html", templates_dir)).unwrap();
+    env.add_template("category.html", template_index.as_str())
+        .unwrap();
+
+    process_posts::process_posts(&mut env, &posts);
+    process_posts::process_index(&mut env, &posts);
+    process_archive::process_archive(&mut env, &posts);
+    process_pages::process_pages(&mut env, &pages);
+
+    // 生成 tag 和 category 页面
+    process_tags::process_tags(&mut env, &posts);
+    process_categories::process_categories(&mut env, &posts);
 }
 
 pub fn build_pages() -> Vec<Page> {
@@ -81,6 +100,23 @@ pub fn build_pages() -> Vec<Page> {
                         .with_context(|| frontmatter.to_string())
                         .unwrap();
                     page.content = Some(markdown_to_html(markdown_content));
+                    pages.push(page);
+                } else if extension == "html" {
+                    let html_content = std::fs::read_to_string(path)
+                        .with_context(|| format!("Failed to read html file: {:?}", path))
+                        .unwrap();
+                    let file_name = path
+                        .file_name()
+                        .expect("Path must have a file name")
+                        .to_str()
+                        .expect("File name must be valid UTF-8")
+                        .replace(".html", "");
+                    let mut page = Page {
+                        title: file_name.clone(),
+                        filename: file_name,
+                        content: Some(html_content),
+                        is_html: Some(true),
+                    };
                     pages.push(page);
                 } else {
                     let dest_path = "public/";
@@ -164,16 +200,19 @@ fn split_content(s: &str) -> (&str, &str) {
     (frontmatter, markdown_content)
 }
 
-
 fn markdown_to_html(markdown_input: &str) -> String {
-    to_html_with_options(markdown_input, &Options {
-        compile: CompileOptions {
-          allow_dangerous_html: true,
-          allow_dangerous_protocol: true,
-            ..CompileOptions::gfm()
+    to_html_with_options(
+        markdown_input,
+        &Options {
+            compile: CompileOptions {
+                allow_dangerous_html: true,
+                allow_dangerous_protocol: true,
+                ..CompileOptions::gfm()
+            },
+            ..Options::default()
         },
-        ..Options::default()
-    }).unwrap()
+    )
+    .unwrap()
 }
 
 fn copy_dir_all(src: &Path, dst: &Path) -> anyhow::Result<()> {

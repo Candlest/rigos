@@ -33,7 +33,6 @@ Disadvantages of Rigos:
 
 # TODO
 
-- [ ] 
 - [ ] Command of init sites, posts and pages
 - [ ] A doc with guidebook ,themes list and others
 
