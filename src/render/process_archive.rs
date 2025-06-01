@@ -5,6 +5,8 @@ use chrono::Datelike;
 use log::info;
 use minijinja::{self, context, Environment};
 
+use crate::{ CONFIG };
+
 use super::entities::Post;
 use std::collections::BTreeMap;
 
@@ -37,9 +39,12 @@ pub fn process_archive(env: &mut Environment, posts: &Vec<Post>) {
 
     // println!("Debug archive_data: {:?}", archive_data);
 
+    let temp_config =(*CONFIG).clone();  //解引用CONFIG使其可以被传递
+
     let archive_html = temp
         .render(context! {
             archive_data => archive_data,
+            CONFIG => temp_config, //以实现全局的客制化内容能被应用到各个页面
         })
         .with_context(|| "Failed to render archive page".to_string())
         .unwrap();

@@ -4,6 +4,8 @@ use anyhow::Context;
 use log::info;
 use minijinja::{self, context, Environment};
 
+use crate::{CONFIG};
+
 use super::entities::Post;
 
 // 删除常量 POSTS_PER_PAGE，因为不再需要分页
@@ -26,12 +28,15 @@ pub fn process_posts(env: &mut Environment, posts: &Vec<Post>) {
         }
     }
 
+    let temp_config =(*CONFIG).clone();  //解引用CONFIG使其可以被传递
+
     for post in posts {
         let post_html = temp
             .render(context! {
                 post => post,
                 recent_posts => recent_posts,
                 tag_cloud => tag_cloud,
+                CONFIG => temp_config, //以实现全局的客制化内容能被应用到各个页面
             })
             .with_context(|| format!("Failed to render post: {}", post.filename))
             .unwrap();
@@ -55,10 +60,13 @@ pub fn process_index(env: &mut Environment, posts: &Vec<Post>) {
         *category_cloud.entry(post.category.clone()).or_insert(0) += 1;
     }
 
+    let temp_config =(*CONFIG).clone();  //解引用CONFIG使其可以被传递
+
     let ctx = minijinja::context! {
         posts => posts,
         tag_cloud => tag_cloud,
         category_cloud => category_cloud,
+        CONFIG => temp_config, //以实现全局的客制化内容能被应用到各个页面
     };
 
     let rendered_index = env
