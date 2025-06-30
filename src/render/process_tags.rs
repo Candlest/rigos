@@ -4,8 +4,6 @@ use anyhow::Context;
 use log::info;
 use minijinja::{self, context, Environment};
 
-use crate::render::process_posts::generate_common_data;
-
 use super::entities::Post;
 use std::collections::HashMap;
 
@@ -20,6 +18,8 @@ pub fn process_tags(env: &mut Environment, posts: &Vec<Post>) {
         }
     }
 
+    let temp_config =(*CONFIG).clone();  //解引用CONFIG使其可以被传递
+
     for (tag, tag_posts) in tag_map {
         let tag_html = temp
             .render(context! {
@@ -28,6 +28,7 @@ pub fn process_tags(env: &mut Environment, posts: &Vec<Post>) {
                 recent_posts => recent_posts,
                 tag_cloud => tag_cloud,
                 category_cloud => category_cloud
+                CONFIG => temp_config, //以实现全局的客制化内容能被应用到各个页面
             })
             .with_context(|| format!("Failed to render tag page: {}", tag))
             .unwrap();
