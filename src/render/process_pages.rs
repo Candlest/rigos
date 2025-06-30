@@ -10,6 +10,9 @@ pub fn process_pages(env: &mut Environment, pages: &Vec<Page>, posts: &Vec<Post>
     let (recent_posts, tag_cloud, category_cloud) = generate_common_data(posts);
     info!("process pages...");
     let temp = env.get_template("page.html").unwrap();
+
+    let temp_config =(*CONFIG).clone();  //解引用CONFIG使其可以被传递
+
     let html_template = env.get_template("page_pure.html").unwrap();
     info!("pages: {:?}", pages);
     for page in pages {
@@ -19,13 +22,14 @@ pub fn process_pages(env: &mut Environment, pages: &Vec<Page>, posts: &Vec<Post>
                 recent_posts => recent_posts,
                 tag_cloud => tag_cloud,
                 category_cloud => category_cloud
-            }).unwrap()
+           , CONFIG => temp_config, //以实现全局的客制化内容能被应用到各个页面 }).unwrap()
         } else {
             temp.render(context! { 
                 page => page,
                 recent_posts => recent_posts,
                 tag_cloud => tag_cloud,
-                category_cloud => category_cloud
+                category_cloud => category_cloud,
+                CONFIG => temp_config,
             }).unwrap()
         };
 

@@ -4,6 +4,8 @@ use anyhow::Context;
 use log::info;
 use minijinja::{self, context, Environment};
 
+use crate::{ CONFIG };
+
 use crate::render::process_posts::generate_common_data;
 
 use super::entities::Post;
@@ -18,11 +20,14 @@ pub fn process_categories(env: &mut Environment, posts: &Vec<Post>) {
         category_map.entry(post.category.clone()).or_insert(Vec::new()).push(post);
     }
 
+    let temp_config =(*CONFIG).clone();  //解引用CONFIG使其可以被传递
+    
     for (category, category_posts) in category_map {
         let category_html = temp
             .render(context! {
                 category => category,
                 posts => category_posts,
+                CONFIG => temp_config, //以实现全局的客制化内容能被应用到各个页面
                 recent_posts => recent_posts,
                 tag_cloud => tag_cloud,
                 category_cloud => category_cloud

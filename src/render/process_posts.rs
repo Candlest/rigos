@@ -4,6 +4,8 @@ use anyhow::Context;
 use log::info;
 use minijinja::{self, context, Environment};
 
+use crate::{CONFIG};
+
 use super::entities::Post;
 use std::collections::HashMap;
 
@@ -13,13 +15,16 @@ pub fn process_posts(env: &mut Environment, posts: &Vec<Post>){
 
     let (recent_posts, tag_cloud, category_cloud) = generate_common_data(posts);
 
+    let temp_config =(*CONFIG).clone();  //解引用CONFIG使其可以被传递
+
     for post in posts {
         let post_html = temp
             .render(context! {
                 post => post,
                 recent_posts => recent_posts,
                 tag_cloud => tag_cloud,
-                category_cloud => category_cloud
+                category_cloud => category_cloud,
+                CONFIG => temp_config,
             })
             .with_context(|| format!("Failed to render post: {}", post.filename))
             .unwrap();
