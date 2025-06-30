@@ -4,13 +4,15 @@ use anyhow::Context;
 use log::info;
 use minijinja::{self, context, Environment};
 
+use crate::render::process_posts::generate_common_data;
+
 use super::entities::Post;
 use std::collections::HashMap;
 
 pub fn process_categories(env: &mut Environment, posts: &Vec<Post>) {
     info!("Processing category pages...");
     let temp = env.get_template("category.html").unwrap();
-
+    let (recent_posts, tag_cloud, category_cloud) = generate_common_data(posts);
     let mut category_map: HashMap<String, Vec<&Post>> = HashMap::new();
     for post in posts {
         category_map.entry(post.category.clone()).or_insert(Vec::new()).push(post);
@@ -21,6 +23,9 @@ pub fn process_categories(env: &mut Environment, posts: &Vec<Post>) {
             .render(context! {
                 category => category,
                 posts => category_posts,
+                recent_posts => recent_posts,
+                tag_cloud => tag_cloud,
+                category_cloud => category_cloud
             })
             .with_context(|| format!("Failed to render category page: {}", category.clone()))
             .unwrap();

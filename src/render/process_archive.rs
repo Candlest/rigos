@@ -5,13 +5,15 @@ use chrono::Datelike;
 use log::info;
 use minijinja::{self, context, Environment};
 
+use crate::render::process_posts::generate_common_data;
+
 use super::entities::Post;
 use std::collections::BTreeMap;
 
 pub fn process_archive(env: &mut Environment, posts: &Vec<Post>) {
     info!("Processing archive page...");
     let temp = env.get_template("archive.html").unwrap();
-
+    let (recent_posts, tag_cloud, category_cloud) = generate_common_data(posts);
     let mut archive_map: BTreeMap<i32, BTreeMap<u32, Vec<&Post>>> = BTreeMap::new();
     for post in posts {
         let year = post.date.year();
@@ -40,6 +42,9 @@ pub fn process_archive(env: &mut Environment, posts: &Vec<Post>) {
     let archive_html = temp
         .render(context! {
             archive_data => archive_data,
+            recent_posts => recent_posts,
+            tag_cloud => tag_cloud,
+            category_cloud => category_cloud
         })
         .with_context(|| "Failed to render archive page".to_string())
         .unwrap();

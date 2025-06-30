@@ -4,13 +4,15 @@ use anyhow::Context;
 use log::info;
 use minijinja::{self, context, Environment};
 
+use crate::render::process_posts::generate_common_data;
+
 use super::entities::Post;
 use std::collections::HashMap;
 
 pub fn process_tags(env: &mut Environment, posts: &Vec<Post>) {
     info!("Processing tag pages...");
     let temp = env.get_template("tag.html").unwrap();
-
+    let (recent_posts, tag_cloud, category_cloud) = generate_common_data(posts);
     let mut tag_map: HashMap<String, Vec<&Post>> = HashMap::new();
     for post in posts {
         for tag in &post.tags {
@@ -23,6 +25,9 @@ pub fn process_tags(env: &mut Environment, posts: &Vec<Post>) {
             .render(context! {
                 tag => tag,
                 posts => tag_posts,
+                recent_posts => recent_posts,
+                tag_cloud => tag_cloud,
+                category_cloud => category_cloud
             })
             .with_context(|| format!("Failed to render tag page: {}", tag))
             .unwrap();

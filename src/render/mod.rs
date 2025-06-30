@@ -74,7 +74,7 @@ pub fn render_all() {
     process_posts::process_posts(&mut env, &posts);
     process_posts::process_index(&mut env, &posts);
     process_archive::process_archive(&mut env, &posts);
-    process_pages::process_pages(&mut env, &pages);
+    process_pages::process_pages(&mut env, &pages, &posts);
 
     // 生成 tag 和 category 页面
     process_tags::process_tags(&mut env, &posts);

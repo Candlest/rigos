@@ -3,18 +3,30 @@ use std::path::Path;
 use log::info;
 use minijinja::{self, context, Environment};
 
-use super::entities::Page;
+use super::entities::{Page, Post};
+use super::process_posts::generate_common_data;
 
-pub fn process_pages(env: &mut Environment, pages: &Vec<Page>) {
+pub fn process_pages(env: &mut Environment, pages: &Vec<Page>, posts: &Vec<Post>) {
+    let (recent_posts, tag_cloud, category_cloud) = generate_common_data(posts);
     info!("process pages...");
     let temp = env.get_template("page.html").unwrap();
     let html_template = env.get_template("page_pure.html").unwrap();
     info!("pages: {:?}", pages);
     for page in pages {
         let page_html = if page.is_html.unwrap_or(false) {
-            html_template.render(context! { page => page }).unwrap()
+            html_template.render(context! { 
+                page => page,
+                recent_posts => recent_posts,
+                tag_cloud => tag_cloud,
+                category_cloud => category_cloud
+            }).unwrap()
         } else {
-            temp.render(context! { page => page }).unwrap()
+            temp.render(context! { 
+                page => page,
+                recent_posts => recent_posts,
+                tag_cloud => tag_cloud,
+                category_cloud => category_cloud
+            }).unwrap()
         };
 
         info!("Writing page: {}", page.filename);
